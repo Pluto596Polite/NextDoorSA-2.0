@@ -362,5 +362,43 @@ main { flex: 1 0 auto; }
 
 .complete-order-page .order-success-badge i { transform: translateY(1px); }
 
+/* Strong, prominent active navbar link - visible on both dark and light navbars */
+.navbar .nav-link.active,
+.navbar .nav-link[aria-current="page"] {
+  font-weight: 800;
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  color: #fff !important;
+  /* Use a clear primary pill so the active link stands out */
+  background: linear-gradient(90deg, var(--ndsa-primary), var(--ndsa-primary-dark));
+  box-shadow: 0 8px 20px rgba(34, 76, 206, 0.18);
+  transform: translateY(-1px);
+}
 
+/* Add a subtle glow underline for extra emphasis (keeps pill look minimal) */
+.navbar .nav-link.active::after,
+.navbar .nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -6px;
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(59,116,242,0.18), rgba(35,79,203,0.12));
+  filter: blur(6px);
+  opacity: 0.9;
+  pointer-events: none;
+}
 
+/* Slight variation for very small screens to avoid crowding */
+@media (max-width: 575.98px) {
+  .navbar .nav-link.active,
+  .navbar .nav-link[aria-current="page"] {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+  }
+  .navbar .nav-link.active::after,
+  .navbar .nav-link[aria-current="page"]::after { bottom: -4px; height: 4px; }
+}
