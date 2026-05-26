@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - NextDoorSA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="libs/bootstrap-icons/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #3b74f2;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        /* Main Content Container */
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 15px;
+        }
+
+        /* Header Icons */
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #3b74f2;
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Cards */
+        .custom-card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* Cart Item Styling */
+        .cart-item-img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .qty-selector {
+            background-color: #f8f9fa;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 15px;
+        }
+
+        .qty-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 0 10px;
+        }
+
+        .price-text {
+            color: #3b74f2;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* Order Summary */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .summary-total {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Promo Code */
+        .promo-input {
+            background-color: #f8f9fa;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px 0 0 10px;
+            padding: 12px 15px;
+            box-shadow: none;
+        }
+        .promo-input:focus {
+            box-shadow: none;
+            border-color: #e0e0e0;
+            background-color: #f8f9fa;
+        }
+        .promo-btn {
+            background-color: #1a1a2e;
+            color: white;
+            border-radius: 0 10px 10px 0;
+            padding: 0 25px;
+            font-weight: 500;
+        }
+
+        /* Primary Button */
+        .btn-primary-custom {
+            background-color: #3b74f2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .btn-primary-custom:hover {
+            background-color: #2b5bc7;
+            color: white;
+        }
+
+        /* Trust Badges */
+        .trust-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            margin-right: 12px;
+        }
+        .icon-green { background-color: #e6f8ed; color: #28a745; }
+        .icon-blue { background-color: #e8f0fe; color: #3b74f2; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <i class="bi bi-intersect fs-2"></i> NextDoorSA
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center gap-4">
+                <li class="nav-item"><a class="nav-link text-white fw-medium" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-white fw-medium" href="#">Explore</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-list-ul fs-5"></i></a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-cart2 fs-5"></i></a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="#"><i class="bi bi-person fs-5"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content-container">
+
+    <div class="d-flex align-items-center mb-4 pb-2">
+        <div class="header-icon me-3">
+            <i class="bi bi-bag"></i>
+        </div>
+        <div>
+            <h2 class="fw-bold mb-1">Shopping Cart</h2>
+            <p class="text-muted mb-0">2 items in your cart</p>
+        </div>
+    </div>
+
+    <div class="custom-card d-flex align-items-center position-relative">
+        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0"><i class="bi bi-trash3"></i></button>
+        <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=200" alt="Mechanical Keyboard" class="cart-item-img me-4">
+
+        <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Mechanical Keyboard</h6>
+            <p class="text-muted small mb-3">Sold by: TechStore SA</p>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="qty-selector">
+                    <button class="qty-btn"><i class="bi bi-dash"></i></button>
+                    <span class="mx-2 fw-medium">1</span>
+                    <button class="qty-btn"><i class="bi bi-plus"></i></button>
+                </div>
+                <div class="price-text">R2000.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-card d-flex align-items-center position-relative">
+        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0"><i class="bi bi-trash3"></i></button>
+        <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=200" alt="Ergonomic Office Chair" class="cart-item-img me-4">
+
+        <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Ergonomic Office Chair</h6>
+            <p class="text-muted small mb-3">Sold by: Furniture Plus</p>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="qty-selector">
+                    <button class="qty-btn"><i class="bi bi-dash"></i></button>
+                    <span class="mx-2 fw-medium">1</span>
+                    <button class="qty-btn"><i class="bi bi-plus"></i></button>
+                </div>
+                <div class="price-text">R2800.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <a href="#" class="text-primary text-decoration-none fw-medium small">
+            <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+        </a>
+    </div>
+
+    <div class="custom-card mt-2">
+        <h5 class="fw-bold mb-4">Order Summary</h5>
+
+        <div class="summary-row text-muted">
+            <span>Subtotal</span>
+            <span class="text-dark fw-medium">R4800.00</span>
+        </div>
+        <div class="summary-row text-muted">
+            <span>Shipping</span>
+            <span class="text-dark fw-medium">R150.00</span>
+        </div>
+
+        <div class="summary-row summary-total">
+            <span>Total</span>
+            <span class="price-text">R4950.00</span>
+        </div>
+
+        <div class="input-group mt-4 mb-4">
+            <span class="input-group-text bg-light border-end-0 border-light"><i class="bi bi-tag text-muted"></i></span>
+            <input type="text" class="form-control promo-input border-start-0 ps-0" placeholder="Promo code">
+            <button class="btn promo-btn" type="button">Apply</button>
+        </div>
+
+        <button class="btn-primary-custom mb-4">
+            Proceed to Checkout <i class="bi bi-arrow-right ms-2"></i>
+        </button>
+
+        <div class="d-flex align-items-center mb-3">
+            <div class="trust-icon icon-green">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <span class="text-muted small">Secure checkout</span>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="trust-icon icon-blue">
+                <i class="bi bi-credit-card"></i>
+            </div>
+            <span class="text-muted small">Safe payment options</span>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
