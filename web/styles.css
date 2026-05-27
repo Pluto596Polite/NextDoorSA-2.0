@@ -371,8 +371,7 @@ main { flex: 1 0 auto; }
   border-radius: 12px;
   color: #fff !important;
   /* Use a clear primary pill so the active link stands out */
-  background: linear-gradient(90deg, var(--ndsa-primary), var(--ndsa-primary-dark));
-  box-shadow: 0 8px 20px rgba(34, 76, 206, 0.18);
+box-shadow: 0 8px 20px rgba(34, 76, 206, 0.18);
   transform: translateY(-1px);
 }
 
