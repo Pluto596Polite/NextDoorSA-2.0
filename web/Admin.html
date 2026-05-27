@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextDoorSA Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f9fafc; color: #333; }
+        .admin-navbar { background: #3b74f2; padding-top: 15px; padding-bottom: 15px; margin-bottom: 40px; }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; }
+        .dashboard-card { background: white; border-radius: 15px; border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.05); padding: 24px; }
+        .header-icon-box { width: 48px; height: 48px; border-radius: 12px; background-color: #7c3aed; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 15px; }
+
+        .icon-users { background-color: rgba(59, 116, 242, 0.1); color: #3b74f2; }
+        .icon-active { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+        .icon-products { background-color: rgba(124, 58, 237, 0.1); color: #7c3aed; }
+        .icon-pending { background-color: rgba(253, 126, 20, 0.1); color: #fd7e14; }
+
+        .custom-tabs { border-bottom: 1px solid #e5e7eb; margin-bottom: 25px; display: flex; gap: 30px; }
+        .custom-tab { padding: 10px 0; color: #6c757d; font-weight: 600; cursor: pointer; position: relative; text-decoration: none; transition: color 0.2s; }
+        .custom-tab:hover { color: #3b74f2; }
+        .custom-tab.active { color: #3b74f2; }
+        .custom-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: #3b74f2; }
+
+        .search-control { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 8px 15px; }
+        .search-control input { border: none; background: transparent; box-shadow: none; outline: none; width: 100%; }
+        .filter-btn { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 8px 20px; color: #6c757d; border: none;}
+
+        .table th { font-weight: 600; color: #333; border-bottom-width: 1px; font-size: 0.85rem; padding-bottom: 15px; }
+        .table td { vertical-align: middle; padding: 15px 10px; border-bottom-color: #f8f9fa; }
+
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .status-active, .status-published { background-color: rgba(25, 135, 84, 0.1); color: #198754; }
+        .status-active::before, .status-published::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #198754; }
+        .status-suspended, .status-draft { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        .status-suspended::before, .status-draft::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #dc3545; }
+        .status-pending { background-color: rgba(253, 126, 20, 0.1); color: #fd7e14; }
+        .status-pending::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background-color: #fd7e14; }
+
+        details.role-dropdown { position: relative; display: inline-block; }
+        details.role-dropdown summary { list-style: none; cursor: pointer; width: 65px; height: 26px; border-radius: 15px; display: inline-block; user-select: none; }
+        details.role-dropdown summary::-webkit-details-marker { display: none; }
+        .role-blue summary { background-color: #e0e7ff; border: 1px solid #c7d2fe; }
+        .role-gray summary { background-color: #f3f4f6; border: 1px solid #e5e7eb; }
+        .role-purple summary { background-color: #f3e8ff; border: 1px solid #e9d5ff; }
+        .dropdown-menu-custom { position: absolute; top: 120%; left: 0; background: white; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100; display: flex; flex-direction: column; gap: 10px; min-width: 140px; }
+        .dropdown-menu-custom label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 500; }
+
+        .info-box { background-color: rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 15px; padding: 24px; display: flex; gap: 20px; }
+        .info-box-icon { background-color: rgba(124, 58, 237, 0.1); color: #7c3aed; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+
+        .action-btn { cursor: pointer; transition: color 0.2s; border: none; background: transparent; padding: 0; }
+        .action-btn:hover { color: #3b74f2 !important; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark py-3 admin-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="Home.html">
+            <i class="bi bi-intersect fs-2"></i> NextDoorSA
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav align-items-center gap-4">
+                <li class="nav-item"><a class="nav-link text-white fw-medium" href="Home.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-white fw-medium" href="ExploreProductsPage.html">Explore</a></li>
+                <li class="nav-item"><a class="nav-link text-white fw-medium" href="CreateAListing.html">Create Listing</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="MyListings.html"> My Listings</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="LogIntoAccount.html"><i class="bi bi-shield-lock"></i> Admin</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="ShoppingCart.html"><i class="bi bi-cart2 fs-5"></i> Cart</a></li>
+                <li class="nav-item"><a class="nav-link text-white fw-medium active" aria-current="page" href="Checkout.html"><i class="bi bi-bag-check"></i> Checkout</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="Profile.html"><i class="bi bi-person fs-5"></i> Profile</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="d-flex align-items-center gap-3 mb-4 pb-2">
+        <div class="header-icon-box"><i class="bi bi-shield-shaded"></i></div>
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">NextDoorSA Admin</h2>
+            <small class="text-muted">System Administration Dashboard</small>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card">
+                <div class="stat-icon icon-users"><i class="bi bi-people"></i></div>
+                <small class="text-muted fw-medium d-block mb-1">Total Users</small>
+                <h3 class="fw-bold mb-0">4</h3>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="dashboard-card">
+                <div class="stat-icon icon-products"><i class="bi bi-box-seam"></i></div>
+                <small class="text-muted fw-medium d-block mb-1">Total Products</small>
+                <h3 class="fw-bold mb-0">12</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-tabs">
+        <a class="custom-tab active d-flex align-items-center gap-2" onclick="switchTab('userView', this)"><i class="bi bi-people"></i> User Management</a>
+        <a class="custom-tab d-flex align-items-center gap-2" onclick="switchTab('productView', this)"><i class="bi bi-box-seam"></i> Product Management</a>
+    </div>
+
+    <div id="userView" class="dashboard-card mb-4 view-section">
+        <div class="d-flex flex-column flex-md-row gap-3 mb-4">
+            <div class="search-control flex-grow-1 d-flex align-items-center gap-2">
+                <i class="bi bi-search text-muted"></i>
+                <input type="text" placeholder="Search users...">
+            </div>
+            <button class="filter-btn"><i class="bi bi-funnel"></i></button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0" id="usersTable">
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Listings</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <span class="fw-semibold d-block text-dark name-val" style="font-size: 0.9rem;">John Smith</span>
+                        <small class="text-muted email-val">john.smith@example.com</small>
+                    </td>
+                    <td>
+                        <details class="role-dropdown role-blue">
+                            <summary></summary>
+                            <div class="dropdown-menu-custom">
+                                <label><input type="checkbox" checked> Admin</label>
+                                <label><input type="checkbox" checked> Seller</label>
+                            </div>
+                        </details>
+                    </td>
+                    <td><span class="status-pill status-active status-val">Active</span></td>
+                    <td class="text-muted listings-val" style="font-size: 0.9rem;">12</td>
+                    <td>
+                        <div class="d-flex gap-3 text-muted">
+                            <button class="action-btn" onclick="openUserEdit(this)"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="fw-semibold d-block text-dark name-val" style="font-size: 0.9rem;">Sarah Johnson</span>
+                        <small class="text-muted email-val">sarah.j@example.com</small>
+                    </td>
+                    <td>
+                        <details class="role-dropdown role-gray">
+                            <summary></summary>
+                            <div class="dropdown-menu-custom">
+                                <label><input type="checkbox" checked> Buyer</label>
+                            </div>
+                        </details>
+                    </td>
+                    <td><span class="status-pill status-suspended status-val">Suspended</span></td>
+                    <td class="text-muted listings-val" style="font-size: 0.9rem;">0</td>
+                    <td>
+                        <div class="d-flex gap-3 text-muted">
+                            <button class="action-btn" onclick="openUserEdit(this)"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="productView" class="dashboard-card mb-4 view-section d-none">
+        <div class="d-flex flex-column flex-md-row gap-3 mb-4">
+            <div class="search-control flex-grow-1 d-flex align-items-center gap-2">
+                <i class="bi bi-search text-muted"></i>
+                <input type="text" placeholder="Search products...">
+            </div>
+            <button class="filter-btn"><i class="bi bi-funnel"></i></button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0" id="productsTable">
+                <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <span class="fw-semibold d-block text-dark p-name-val" style="font-size: 0.9rem;">Vintage Oak Table</span>
+                        <small class="text-muted p-seller-val">Sold by: John Smith</small>
+                    </td>
+                    <td class="p-category-val" style="font-size: 0.9rem;">Furniture</td>
+                    <td class="fw-medium text-dark p-price-val" style="font-size: 0.9rem;">R 1,500</td>
+                    <td><span class="status-pill status-published p-status-val">Published</span></td>
+                    <td>
+                        <div class="d-flex gap-3 text-muted">
+                            <button class="action-btn" onclick="openProductEdit(this)"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="fw-semibold d-block text-dark p-name-val" style="font-size: 0.9rem;">Samsung Smart TV</span>
+                        <small class="text-muted p-seller-val">Sold by: Mike Wilson</small>
+                    </td>
+                    <td class="p-category-val" style="font-size: 0.9rem;">Electronics</td>
+                    <td class="fw-medium text-dark p-price-val" style="font-size: 0.9rem;">R 6,200</td>
+                    <td><span class="status-pill status-pending p-status-val">Pending Review</span></td>
+                    <td>
+                        <div class="d-flex gap-3 text-muted">
+                            <button class="action-btn" onclick="openProductEdit(this)"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="info-box align-items-start">
+        <div class="info-box-icon"><i class="bi bi-lock-fill"></i></div>
+        <div>
+            <h6 class="fw-bold mb-2">Role-Based Access Control</h6>
+            <div class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+                <p class="mb-1"><strong class="text-dark">Admin:</strong> Full system access, can manage all users and products</p>
+                <p class="mb-0"><strong class="text-dark">Seller / Buyer:</strong> Can browse, buy, and manage own listings.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Full Name</label>
+                    <input type="text" class="form-control" id="editUserName">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Email Address</label>
+                    <input type="email" class="form-control" id="editUserEmail">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Account Status</label>
+                    <select class="form-select" id="editUserStatus">
+                        <option value="Active">Active</option>
+                        <option value="Suspended">Suspended</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary px-4 rounded-pill" onclick="saveUser()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0" style="border-radius: 15px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Product Name</label>
+                    <input type="text" class="form-control" id="editProductName">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-medium small">Price</label>
+                        <input type="text" class="form-control" id="editProductPrice">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-medium small">Category</label>
+                        <select class="form-select" id="editProductCategory">
+                            <option>Furniture</option>
+                            <option>Electronics</option>
+                            <option>Home & Garden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Status</label>
+                    <select class="form-select" id="editProductStatus">
+                        <option value="Published">Published</option>
+                        <option value="Pending Review">Pending Review</option>
+                        <option value="Draft">Draft</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary px-4 rounded-pill" onclick="saveProduct()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentRow = null;
+    let userModal = null;
+    let productModal = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        userModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        productModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+    });
+
+    function switchTab(viewId, el) {
+        document.querySelectorAll('.custom-tab').forEach(tab => tab.classList.remove('active'));
+        el.classList.add('active');
+
+        document.querySelectorAll('.view-section').forEach(view => view.classList.add('d-none'));
+        document.getElementById(viewId).classList.remove('d-none');
+    }
+
+    // --- User Editing Logic ---
+    function openUserEdit(btn) {
+        currentRow = btn.closest('tr');
+        document.getElementById('editUserName').value = currentRow.querySelector('.name-val').innerText;
+        document.getElementById('editUserEmail').value = currentRow.querySelector('.email-val').innerText;
+        document.getElementById('editUserStatus').value = currentRow.querySelector('.status-val').innerText;
+        userModal.show();
+    }
+
+    function saveUser() {
+        currentRow.querySelector('.name-val').innerText = document.getElementById('editUserName').value;
+        currentRow.querySelector('.email-val').innerText = document.getElementById('editUserEmail').value;
+
+        const newStatus = document.getElementById('editUserStatus').value;
+        const statusSpan = currentRow.querySelector('.status-val');
+        statusSpan.innerText = newStatus;
+
+        statusSpan.className = 'status-pill status-val ' + (newStatus === 'Active' ? 'status-active' : 'status-suspended');
+        userModal.hide();
+    }
+
+    // --- Product Editing Logic ---
+    function openProductEdit(btn) {
+        currentRow = btn.closest('tr');
+        document.getElementById('editProductName').value = currentRow.querySelector('.p-name-val').innerText;
+        document.getElementById('editProductPrice').value = currentRow.querySelector('.p-price-val').innerText;
+        document.getElementById('editProductCategory').value = currentRow.querySelector('.p-category-val').innerText;
+        document.getElementById('editProductStatus').value = currentRow.querySelector('.p-status-val').innerText;
+        productModal.show();
+    }
+
+    function saveProduct() {
+        currentRow.querySelector('.p-name-val').innerText = document.getElementById('editProductName').value;
+        currentRow.querySelector('.p-price-val').innerText = document.getElementById('editProductPrice').value;
+        currentRow.querySelector('.p-category-val').innerText = document.getElementById('editProductCategory').value;
+
+        const newStatus = document.getElementById('editProductStatus').value;
+        const statusSpan = currentRow.querySelector('.p-status-val');
+        statusSpan.innerText = newStatus;
+
+        let statusClass = 'status-published';
+        if(newStatus === 'Pending Review') statusClass = 'status-pending';
+        if(newStatus === 'Draft') statusClass = 'status-draft';
+
+        statusSpan.className = 'status-pill p-status-val ' + statusClass;
+        productModal.hide();
+    }
+
+    function deleteRow(btn) {
+        if(confirm("Are you sure you want to delete this row?")) {
+            btn.closest('tr').remove();
+        }
+    }
+</script>
+</body>
+</html>
