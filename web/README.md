@@ -47,7 +47,7 @@ This repo now includes a minimal PHP MySQL setup:
 From the repository root:
 
 ```bash
-php /tmp/workspace/Pluto596Polite/NextDoorSA-2.0/web/init_database.php
+php web/init_database.php
 ```
 
 After initialization, you can include `database.php` in PHP scripts and call `getDatabaseConnection()`.
