@@ -168,13 +168,13 @@
 				</div>
 				<div class="col-lg-5">
 					<div class="payment-glow-card">
-						<div class="d-flex justify-content-between align-items-start mb-4">
-							<div>
-								<p class="text-uppercase text-white-50 small mb-1">Estimated total</p>
-								<h2 class="text-white fw-bold mb-0">R5,670.00</h2>
-							</div>
-							<span class="gateway-chip"><i class="bi bi-stars me-1"></i> NextDoorSA Pay</span>
-						</div>
+									<div class="d-flex justify-content-between align-items-start mb-4">
+										<div>
+											<p class="text-uppercase text-white-50 small mb-1">Estimated total</p>
+											<h2 id="estimated-total" class="text-white fw-bold mb-0">R5,670.00</h2>
+										</div>
+										<span class="gateway-chip"><i class="bi bi-stars me-1"></i> NextDoorSA Pay</span>
+									</div>
 
 						<div class="mini-payment-card">
 							<div class="d-flex justify-content-between align-items-center mb-3">
@@ -281,14 +281,14 @@
 
 						<div class="gateway-divider"></div>
 
-						<div class="d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-sm-center mt-4">
+							<div class="d-flex flex-column flex-sm-row gap-3 justify-content-between align-items-sm-center mt-4">
 							<div>
 								<p class="mb-1 fw-semibold">Billing email</p>
 								<p class="text-muted mb-0 small">Receipts and order updates will be sent here.</p>
 							</div>
-							<button type="button" class="btn gateway-pay-btn px-4" onclick="window.location.href='CompleteOrder.html'">
-								Pay R5,670.00 <i class="bi bi-arrow-right-circle ms-2"></i>
-							</button>
+								<button id="pay-button" type="button" class="btn gateway-pay-btn px-4" onclick=window.location.href="CompleteOrder.html">
+									Pay R5,670.00 <i class="bi bi-arrow-right-circle ms-2"></i>
+								</button>
 						</div>
 					</form>
 				</div>
@@ -332,42 +332,20 @@
 					<div class="d-flex justify-content-between align-items-center mb-4">
 						<div>
 							<h3 class="gateway-card-title mb-1">Order summary</h3>
-							<p class="text-muted small mb-0">2 items in your cart</p>
+							<p class="text-muted small mb-0"><span id="pg-items-count">0</span> items in your cart</p>
 						</div>
 						<i class="bi bi-bag-check text-primary fs-3"></i>
 					</div>
 
-					<div class="summary-item-modern">
-						<img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=150" alt="Mechanical Keyboard">
-						<div class="flex-grow-1">
-							<div class="d-flex justify-content-between gap-3">
-								<div>
-									<h6 class="mb-1 fw-semibold">Mechanical Keyboard</h6>
-									<p class="text-muted small mb-0">Qty: 1 • Midnight Black</p>
-								</div>
-								<span class="fw-semibold text-primary">R2,000.00</span>
-							</div>
-						</div>
-					</div>
-
-					<div class="summary-item-modern">
-						<img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=150" alt="Ergonomic Office Chair">
-						<div class="flex-grow-1">
-							<div class="d-flex justify-content-between gap-3">
-								<div>
-									<h6 class="mb-1 fw-semibold">Ergonomic Office Chair</h6>
-									<p class="text-muted small mb-0">Qty: 1 • Grey fabric</p>
-								</div>
-								<span class="fw-semibold text-primary">R2,800.00</span>
-							</div>
-						</div>
+					<div id="payment-summary-items">
+						<!-- items will be injected here -->
 					</div>
 
 					<div class="gateway-totals mt-4 pt-3">
-						<div class="summary-line"><span>Subtotal</span><span>R4,800.00</span></div>
-						<div class="summary-line"><span>Shipping</span><span>R150.00</span></div>
-						<div class="summary-line"><span>VAT (15%)</span><span>R720.00</span></div>
-						<div class="summary-line total"><span>Total</span><span>R5,670.00</span></div>
+						<div class="summary-line"><span>Subtotal</span><span id="pg-subtotal">R0.00</span></div>
+						<div class="summary-line"><span>Shipping</span><span id="pg-shipping">R0.00</span></div>
+						<div class="summary-line"><span>VAT (15%)</span><span id="pg-vat">R0.00</span></div>
+						<div class="summary-line total"><span>Total</span><span id="pg-total">R0.00</span></div>
 					</div>
 
 					<div class="gateway-note mt-4">
@@ -378,7 +356,90 @@
 			</div>
 		</div>
 	</section>
+
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const cartJson = localStorage.getItem('nd_cart');
+	if (!cartJson) return; // nothing to populate
+	const cart = JSON.parse(cartJson);
+	const fmt = (v) => new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(v);
+
+	// populate hero estimated total
+	const estimatedEl = document.getElementById('estimated-total');
+	if (estimatedEl) estimatedEl.textContent = fmt(cart.total || 0);
+
+	// populate summary items
+	const itemsContainer = document.getElementById('payment-summary-items');
+	const itemsCountEl = document.getElementById('pg-items-count');
+	let itemsCount = 0;
+	if (itemsContainer && cart.items && cart.items.length) {
+		itemsContainer.innerHTML = '';
+		cart.items.forEach(it => {
+			itemsCount += it.qty;
+			const lineTotal = (it.price || 0) * (it.qty || 1);
+			const image = it.image || 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=150';
+			const variant = it.variant || it.details || '';
+			const node = document.createElement('div');
+			node.className = 'summary-item-modern';
+			node.innerHTML = `
+				<div class="d-flex justify-content-between gap-3">
+					<img src="${image}" alt="${it.name}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+					<div>
+						<h6 class="mb-1 fw-semibold">${it.name}</h6>
+						<p class="text-muted small mb-0">Qty: ${it.qty}${variant ? ' • ' + variant : ''}</p>
+					</div>
+					<span class="fw-semibold text-primary">${fmt(lineTotal)}</span>
+				</div>
+			`;
+			itemsContainer.appendChild(node);
+		});
+	}
+	if (itemsCountEl) itemsCountEl.textContent = itemsCount;
+
+	// totals
+	const subtotalEl = document.getElementById('pg-subtotal');
+	const shippingEl = document.getElementById('pg-shipping');
+	const vatEl = document.getElementById('pg-vat');
+	const totalEl = document.getElementById('pg-total');
+	if (subtotalEl) subtotalEl.textContent = fmt(cart.subtotal || 0);
+	if (shippingEl) shippingEl.textContent = fmt(cart.shipping || 0);
+	if (vatEl) vatEl.textContent = fmt(cart.vat || 0);
+	if (totalEl) totalEl.textContent = fmt(cart.total || 0);
+
+	// pay button - build order and navigate
+	const payBtn = document.getElementById('pay-button');
+	if (payBtn) {
+		payBtn.textContent = `Pay ${fmt(cart.total || 0)}`;
+		const icon = document.createElement('i'); icon.className = 'bi bi-arrow-right-circle ms-2';
+		payBtn.appendChild(icon);
+		payBtn.addEventListener('click', () => {
+			// create order metadata
+			const now = new Date();
+			const y = now.getFullYear();
+			const rnd = Math.floor(1000 + Math.random() * 9000);
+			const orderNumber = `ND-${y}-${rnd}`;
+			const invoiceNumber = `INV-${y}-${rnd}`;
+			const order = {
+				orderNumber,
+				invoiceNumber,
+				date: now.toISOString(),
+				status: 'Paid',
+				paymentMethod: document.querySelector('input[name="paymentMethod"]:checked') ? 'Card' : 'Card',
+				items: cart.items || [],
+				subtotal: cart.subtotal || 0,
+				shipping: cart.shipping || 0,
+				vat: Number(cart.vat) || Math.round((Number(cart.subtotal) || 0) * 0.15 * 100) / 100,
+				total: Number(cart.total) || ((Number(cart.subtotal) || 0) + (Number(cart.shipping) || 0) + (Number(cart.vat) || Math.round((Number(cart.subtotal) || 0) * 0.15 * 100) / 100))
+			};
+			try { localStorage.setItem('nd_order', JSON.stringify(order)); } catch (e) {}
+			// simulate immediate payment and go to complete page
+			window.location.href = 'CompleteOrder.html';
+		});
+	}
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

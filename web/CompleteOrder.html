@@ -1,305 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Order Complete - NextDoorSA</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="libs/bootstrap-icons/bootstrap-icons.css">
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="styles.css">
-	<style>
-		body {
-			font-family: 'Poppins', sans-serif;
-			background-color: #f4f6f8;
-			color: #333;
-		}
-
-		/* Navbar */
-		.navbar {
-			background-color: #3b74f2;
-		}
-		.navbar-brand {
-			font-weight: 700;
-			font-size: 1.5rem;
-		}
-
-		/* Main Content Container */
-		.content-container {
-			max-width: 800px;
-			margin: 0 auto;
-			padding: 40px 15px;
-		}
-
-		/* Header Icons */
-		.header-icon {
-			width: 50px;
-			height: 50px;
-			background-color: #3b74f2;
-			color: white;
-			border-radius: 12px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1.5rem;
-		}
-
-		/* Cards */
-		.custom-card {
-			background: white;
-			border-radius: 16px;
-			border: none;
-			box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-			padding: 30px;
-			margin-bottom: 25px;
-		}
-
-		.card-header-icon {
-			width: 35px;
-			height: 35px;
-			border-radius: 8px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1.2rem;
-			margin-right: 15px;
-		}
-
-		.icon-blue { background-color: #e8f0fe; color: #3b74f2; }
-		.icon-purple { background-color: #f3e8fe; color: #9c27b0; }
-		.icon-yellow { background-color: #fef7e8; color: #f5b041; }
-
-		/* Form Inputs */
-		.form-label {
-			font-weight: 600;
-			font-size: 0.9rem;
-			color: #495057;
-		}
-		.form-control, .form-select, .input-group-text {
-			background-color: #f8f9fa;
-			border: 1px solid #f0f0f0;
-			border-radius: 10px;
-			padding: 12px 15px;
-			box-shadow: none;
-		}
-		.form-control:focus, .form-select:focus {
-			background-color: white;
-			border-color: #3b74f2;
-			box-shadow: 0 0 0 0.25rem rgba(59, 116, 242, 0.1);
-		}
-		.form-text {
-			font-size: 0.75rem;
-			color: #8c98a4;
-			margin-top: 8px;
-		}
-
-		/* Upload Zone */
-		.upload-zone {
-			border: 2px dashed #dee2e6;
-			border-radius: 12px;
-			padding: 40px;
-			text-align: center;
-			background-color: #fafbfc;
-			cursor: pointer;
-			transition: all 0.2s;
-		}
-		.upload-zone:hover {
-			border-color: #3b74f2;
-			background-color: #f4f7ff;
-		}
-		.upload-icon {
-			width: 60px;
-			height: 60px;
-			background-color: #e8f0fe;
-			color: #3b74f2;
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1.5rem;
-			margin: 0 auto 15px auto;
-		}
-
-		/* Primary Button */
-		.btn-primary {
-			background-color: #3b74f2;
-			border: none;
-			border-radius: 10px;
-			padding: 15px;
-			font-weight: 600;
-			font-size: 1rem;
-		}
-		.btn-primary:hover {
-			background-color: #2b5bc7;
-		}
-
-		/* Tips List */
-		.tips-list {
-			list-style: none;
-			padding: 0;
-			margin: 0;
-		}
-		.tips-list li {
-			display: flex;
-			margin-bottom: 20px;
-			align-items: flex-start;
-		}
-		.tips-list i {
-			color: #28a745;
-			font-size: 1.2rem;
-			margin-right: 15px;
-			margin-top: 2px;
-		}
-		.tips-list h6 {
-			margin: 0 0 4px 0;
-			font-weight: 600;
-			font-size: 0.95rem;
-		}
-		.tips-list p {
-			margin: 0;
-			font-size: 0.85rem;
-			color: #6c757d;
-		}
-	</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Complete - NextDoorSA</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="libs/bootstrap-icons/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+body{font-family:"Poppins",sans-serif;background:#f4f6f8;color:#333}
+.navbar{background:#3b74f2}.navbar-brand{font-weight:700;font-size:1.5rem}
+.cardx{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.03);border:none;padding:30px}
+.summary-item-modern{display:flex;gap:15px;align-items:center;padding:14px 0;border-top:1px solid #f0f0f0}
+.summary-item-modern:first-child{border-top:none}
+.summary-item-modern img{width:60px;height:60px;border-radius:10px;object-fit:cover}
+.summary-line{display:flex;justify-content:space-between;margin-bottom:12px;font-size:.95rem;color:#6c757d}
+.summary-line.total{border-top:1px solid #f0f0f0;padding-top:15px;margin-top:15px;color:#333;font-weight:700}
+.btn-pay{background:#3b74f2;color:#fff;border:none;border-radius:10px}
+.btn-pay:hover{background:#2b5bc7;color:#fff}
+</style>
 </head>
-<body class="complete-order-page">
-
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark py-3">
-	<div class="container-fluid px-4">
-		<a class="navbar-brand d-flex align-items-center gap-2" href="Home.html">
-			<i class="bi bi-intersect fs-2"></i> NextDoorSA
-		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-			<ul class="navbar-nav align-items-center gap-4">
-				<li class="nav-item"><a class="nav-link text-white fw-medium" href="Home.html">Home</a></li>
-				<li class="nav-item"><a class="nav-link text-white fw-medium" href="ExploreProductsPage.html">Explore</a></li>
-				<li class="nav-item"><a class="nav-link text-white fw-medium" href="CreateAListing.html">Create Listing</a></li>
-				<li class="nav-item"><a class="nav-link text-white" href="MyListings.html"> My Listings</a></li>
-				<li class="nav-item"><a class="nav-link text-white" href="LogIntoAccount.html"><i class="bi bi-shield-lock"></i> Admin</a></li>
-				<li class="nav-item"><a class="nav-link text-white" href="ShoppingCart.html"><i class="bi bi-cart2 fs-5"></i> Cart</a></li>
-				<li class="nav-item dropdown">
-				    <a class="nav-link text-white fw-medium dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
-				    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-				        <li><a class="dropdown-item" href="CreateAnAccount.html">Create Account</a></li>
-				        <li><a class="dropdown-item" href="LogIntoAccount.html">Log In</a></li>
-				        <li><a class="dropdown-item" href="Profile.html">Profile</a></li>
-				    </ul>
-				</li>
-			</ul>
-		</div>
-	</div>
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="Home.html"><i class="bi bi-intersect fs-2"></i> NextDoorSA</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center gap-4">
+        <li class="nav-item"><a class="nav-link text-white fw-medium" href="Home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link text-white fw-medium" href="ExploreProductsPage.html">Explore</a></li>
+        <li class="nav-item"><a class="nav-link text-white fw-medium" href="ShoppingCart.html"><i class="bi bi-cart2"></i> Cart</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
-
 <main class="container py-5">
-	<div class="row justify-content-center">
-		<div class="col-xl-9">
-			<div class="complete-hero p-4 p-lg-5 rounded-4 mb-4 shadow-sm">
-				<div class="d-flex align-items-center gap-4">
-					<div class="order-success-badge bg-success bg-opacity-10 text-success rounded-circle d-grid place-items-center">
-						<i class="bi bi-check-circle-fill fs-1"></i>
-					</div>
-					<div>
-						<h1 class="mb-1 fw-bold">Payment successful</h1>
-						<p class="mb-1 text-muted">Thank you — your order is confirmed.</p>
-						<p class="small text-muted mb-0">Order #<strong>ND-2026-4821</strong> • Placed on <time datetime="2026-05-26">26 May 2026</time></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="row g-4">
-				<div class="col-lg-7">
-					<div class="gateway-card">
-						<h3 class="gateway-card-title mb-2">What happens next?</h3>
-						<p class="text-muted mb-4">We're processing your payment now. You'll receive an email receipt and a tracking link when the seller ships your items.</p>
-
-						<div class="d-flex gap-3 flex-column flex-md-row mb-3">
-							<a href="CompleteOrder.html" class="btn btn-outline-primary flex-grow-1">View receipt</a>
-							<a href="MyListings.html" class="btn gateway-pay-btn text-nowrap">View order</a>
-						</div>
-
-						<div class="mt-4">
-							<h6 class="fw-semibold mb-3">Delivery estimate</h6>
-							<div class="d-flex align-items-start gap-3">
-								<i class="bi bi-truck fs-3 text-primary"></i>
-								<div>
-									<p class="mb-0">Estimated delivery: <strong>2–4 business days</strong></p>
-									<p class="small text-muted mb-0">Delivery time depends on seller dispatch and your location.</p>
-								</div>
-							</div>
-						</div>
-
-						<div class="mt-4">
-							<h6 class="fw-semibold mb-3">Need help?</h6>
-							<p class="text-muted small mb-0">Contact our support team if you have questions about your order. We're happy to help.</p>
-						</div>
-					</div>
-
-					<div class="gateway-card mt-4">
-						<h5 class="gateway-card-title mb-3">Items in this order</h5>
-
-						<div class="summary-item-modern">
-							<img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=150" alt="Mechanical Keyboard">
-							<div class="flex-grow-1">
-								<div class="d-flex justify-content-between gap-3">
-									<div>
-										<h6 class="mb-1 fw-semibold">Mechanical Keyboard</h6>
-										<p class="text-muted small mb-0">Qty: 1 • Midnight Black</p>
-									</div>
-									<span class="fw-semibold text-primary">R2,000.00</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="summary-item-modern">
-							<img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=150" alt="Ergonomic Office Chair">
-							<div class="flex-grow-1">
-								<div class="d-flex justify-content-between gap-3">
-									<div>
-										<h6 class="mb-1 fw-semibold">Ergonomic Office Chair</h6>
-										<p class="text-muted small mb-0">Qty: 1 • Grey fabric</p>
-									</div>
-									<span class="fw-semibold text-primary">R2,800.00</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-lg-5">
-					<div class="gateway-card gateway-summary-card">
-						<div class="d-flex justify-content-between align-items-center mb-3">
-							<h5 class="mb-0 fw-semibold">Order summary</h5>
-							<span class="text-muted small">2 items</span>
-						</div>
-
-						<div class="gateway-totals">
-							<div class="summary-line"><span>Subtotal</span><span>R4,800.00</span></div>
-							<div class="summary-line"><span>Shipping</span><span>R150.00</span></div>
-							<div class="summary-line"><span>VAT (15%)</span><span>R720.00</span></div>
-							<div class="summary-line total"><span>Total</span><span>R5,670.00</span></div>
-						</div>
-
-						<div class="mt-4 d-grid gap-2">
-							<a href="ExploreProductsPage.html" class="btn btn-outline-secondary">Continue shopping</a>
-							<a href="#" class="btn gateway-pay-btn">Download invoice (PDF)</a>
-						</div>
-
-						<div class="gateway-note mt-4">
-							<i class="bi bi-lock-fill"></i>
-							<p class="mb-0">Payment processed securely. If you suspect an issue, contact support within 24 hours.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="row justify-content-center">
+    <div class="col-xl-9">
+      <div class="cardx mb-4">
+        <div class="d-flex align-items-center gap-4">
+          <div class="bg-success bg-opacity-10 text-success rounded-circle d-grid place-items-center" style="width:72px;height:72px"><i class="bi bi-check-circle-fill fs-1"></i></div>
+          <div>
+            <h1 class="mb-1 fw-bold">Payment successful</h1>
+            <p class="mb-1 text-muted">Thank you — your order is confirmed.</p>
+            <p class="small text-muted mb-0">Order #<strong id="order-number">ND-0000-0000</strong> • Placed on <time id="order-date" datetime="">—</time></p>
+          </div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="cardx">
+            <h3 class="mb-2 fw-semibold">What happens next?</h3>
+            <p class="text-muted mb-4">We’ll process your payment and send a tracking link when the seller ships your items.</p>
+            <div class="d-flex gap-3 flex-column flex-md-row mb-3">
+              <button type="button" class="btn btn-outline-primary flex-grow-1" data-bs-toggle="modal" data-bs-target="#receiptModal">View receipt</button>
+              <button type="button" class="btn btn-pay text-nowrap" data-bs-toggle="modal" data-bs-target="#orderModal">View order</button>
+            </div>
+            <div class="mt-4"><h6 class="fw-semibold mb-3">Delivery estimate</h6><div class="d-flex align-items-start gap-3"><i class="bi bi-truck fs-3 text-primary"></i><div><p class="mb-0">Estimated delivery: <strong>2–4 business days</strong></p><p class="small text-muted mb-0">Delivery time depends on seller dispatch and your location.</p></div></div></div>
+          </div>
+          <div class="cardx mt-4"><h5 class="fw-semibold mb-3">Items in this order</h5><div id="complete-order-items"></div></div>
+        </div>
+        <div class="col-lg-5">
+          <div class="cardx">
+            <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0 fw-semibold">Order summary</h5><span id="order-items-count" class="text-muted small">0 items</span></div>
+            <div class="summary-line"><span>Subtotal</span><span id="order-subtotal">R0.00</span></div>
+            <div class="summary-line"><span>Shipping</span><span id="order-shipping">R0.00</span></div>
+            <div class="summary-line"><span>VAT (15%)</span><span id="order-vat">R0.00</span></div>
+            <div class="summary-line total"><span>Total</span><span id="order-total">R0.00</span></div>
+            <div class="mt-4 d-grid gap-2"><a href="ExploreProductsPage.html" class="btn btn-outline-secondary">Continue shopping</a><button type="button" class="btn btn-pay" id="download-invoice-btn">Download invoice</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
-
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <div><p class="text-success fw-semibold mb-1">Payment successful</p><h5 class="modal-title fw-bold" id="receiptModalLabel">Receipt details</h5></div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-2">
+        <div class="row g-4">
+          <div class="col-md-6"><div class="p-3 rounded-4 bg-light h-100"><p class="text-muted small mb-1">Receipt number</p><p id="receipt-number" class="fw-semibold mb-3">—</p><p class="text-muted small mb-1">Order number</p><p id="receipt-order-number" class="fw-semibold mb-3">—</p><p class="text-muted small mb-1">Paid on</p><p class="fw-semibold mb-0"><time id="receipt-paid-on" datetime="">—</time></p></div></div>
+          <div class="col-md-6"><div class="p-3 rounded-4 bg-light h-100"><p class="text-muted small mb-1">Payment status</p><p id="receipt-status" class="fw-semibold text-success mb-3">Successful</p><p class="text-muted small mb-1">Payment method</p><p id="receipt-method" class="fw-semibold mb-3">Secure online payment</p><p class="text-muted small mb-1">Amount charged</p><p id="receipt-total" class="fw-semibold mb-0">R0.00</p></div></div>
+        </div>
+        <hr class="my-4"><h6 class="fw-semibold mb-3">Items charged</h6><div id="receipt-items"></div>
+        <div class="border-top pt-3 mt-3"><div class="d-flex justify-content-between text-muted small"><span>Subtotal</span><span id="receipt-subtotal">R0.00</span></div><div class="d-flex justify-content-between text-muted small"><span>Shipping</span><span id="receipt-shipping">R0.00</span></div><div class="d-flex justify-content-between text-muted small"><span>VAT (15%)</span><span id="receipt-vat">R0.00</span></div><div class="d-flex justify-content-between fw-bold mt-2"><span>Total</span><span id="receipt-grand-total">R0.00</span></div></div>
+      </div>
+      <div class="modal-footer border-0 pt-0"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-pay" id="download-invoice-btn-modal">Download invoice</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-0 pb-0"><div><p class="text-primary fw-semibold mb-1">Order overview</p><h5 class="modal-title fw-bold" id="orderModalLabel">Your order at a glance</h5></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body pt-2">
+        <div class="row g-4"><div class="col-md-6"><div class="p-3 rounded-4 bg-light h-100"><p class="text-muted small mb-1">Order number</p><p id="modal-order-number" class="fw-semibold mb-3">—</p><p class="text-muted small mb-1">Current status</p><p id="modal-order-status" class="fw-semibold text-warning mb-3">Processing</p><p class="text-muted small mb-1">Delivery estimate</p><p class="fw-semibold mb-0">2–4 business days</p></div></div><div class="col-md-6"><div class="p-3 rounded-4 bg-light h-100"><p class="text-muted small mb-1">Next step</p><p class="fw-semibold mb-3">Seller confirmation and dispatch</p><p class="text-muted small mb-1">Tracking</p><p class="fw-semibold mb-3">Link will appear once shipped</p><p class="text-muted small mb-1">Support</p><p class="fw-semibold mb-0">Contact us within 24 hours if anything looks wrong.</p></div></div></div>
+        <hr class="my-4"><h6 class="fw-semibold mb-3">Items in this order</h6><div id="order-modal-items"></div>
+      </div>
+      <div class="modal-footer border-0 pt-0"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><a href="ExploreProductsPage.html" class="btn btn-pay">Continue shopping</a></div>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const fmt = (v) => new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(Number(v) || 0);
+  const safeParse = (key) => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
+  const cart = safeParse('nd_cart');
+  const order = safeParse('nd_order');
+  const source = order || (cart ? { orderNumber: cart.orderNumber || 'ND-0000-0000', invoiceNumber: cart.invoiceNumber || 'INV-0000-0000', date: cart.date || new Date().toISOString(), status: 'Processing', paymentMethod: 'Secure online payment', items: cart.items || [], subtotal: Number(cart.subtotal) || 0, shipping: Number(cart.shipping) || 0, vat: Number(cart.vat) || Math.round((Number(cart.subtotal) || 0) * 0.15 * 100) / 100, total: Number(cart.total) || ((Number(cart.subtotal) || 0) + (Number(cart.shipping) || 0) + (Number(cart.vat) || Math.round((Number(cart.subtotal) || 0) * 0.15 * 100) / 100)) } : null);
+  if (!source) return;
+  const items = Array.isArray(source.items) ? source.items : [];
+  const subtotal = Number(source.subtotal) || 0;
+  const shipping = Number(source.shipping) || 0;
+  const vat = Number(source.vat) || Math.round(subtotal * 0.15 * 100) / 100;
+  const total = Number(source.total) || subtotal + shipping + vat;
+  const dateObj = new Date(source.date || new Date());
+  const dateLabel = dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  const totalItems = items.reduce((n, i) => n + (Number(i.qty) || 0), 0);
+  const renderItem = (item) => { const qty = Number(item.qty) || 1; const lineTotal = (Number(item.price) || 0) * qty; const variant = item.variant || item.details || ''; const image = item.image || 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=150'; return `<div class="summary-item-modern"><img src="${image}" alt="${item.name}"><div class="flex-grow-1"><div class="d-flex justify-content-between gap-3"><div><h6 class="mb-1 fw-semibold">${item.name}</h6><p class="text-muted small mb-0">Qty: ${qty}${variant ? ' • ' + variant : ''}</p></div><span class="fw-semibold text-primary">${fmt(lineTotal)}</span></div></div></div>`; };
+  const html = items.map(renderItem).join('') || '<p class="text-muted small mb-0">No items found.</p>';
+  document.getElementById('complete-order-items').innerHTML = html;
+  document.getElementById('receipt-items').innerHTML = html;
+  document.getElementById('order-modal-items').innerHTML = html;
+  document.getElementById('order-number').textContent = source.orderNumber;
+  document.getElementById('order-date').textContent = dateLabel;
+  document.getElementById('order-date').setAttribute('datetime', dateObj.toISOString().slice(0,10));
+  document.getElementById('order-items-count').textContent = `${totalItems} items`;
+  document.getElementById('order-subtotal').textContent = fmt(subtotal);
+  document.getElementById('order-shipping').textContent = fmt(shipping);
+  document.getElementById('order-vat').textContent = fmt(vat);
+  document.getElementById('order-total').textContent = fmt(total);
+  document.getElementById('receipt-number').textContent = source.invoiceNumber || '—';
+  document.getElementById('receipt-order-number').textContent = source.orderNumber || '—';
+  document.getElementById('receipt-paid-on').textContent = dateLabel;
+  document.getElementById('receipt-paid-on').setAttribute('datetime', dateObj.toISOString().slice(0,10));
+  document.getElementById('receipt-method').textContent = source.paymentMethod || 'Secure online payment';
+  document.getElementById('receipt-status').textContent = source.status || 'Successful';
+  document.getElementById('receipt-total').textContent = fmt(total);
+  document.getElementById('receipt-subtotal').textContent = fmt(subtotal);
+  document.getElementById('receipt-shipping').textContent = fmt(shipping);
+  document.getElementById('receipt-vat').textContent = fmt(vat);
+  document.getElementById('receipt-grand-total').textContent = fmt(total);
+  document.getElementById('modal-order-number').textContent = source.orderNumber || '—';
+  document.getElementById('modal-order-status').textContent = source.status || 'Processing';
+  const getInvoiceData = () => ({ invoiceNumber: source.invoiceNumber || 'INV-0000-0000', orderNumber: source.orderNumber || 'ND-0000-0000', date: dateLabel, status: source.status || 'Paid', paymentMethod: source.paymentMethod || 'Secure online payment', items: items.map(item => ({ name: item.name, details: `Qty: ${Number(item.qty) || 1}${(item.variant || item.details) ? ' • ' + (item.variant || item.details) : ''}`, price: fmt((Number(item.price) || 0) * (Number(item.qty) || 1)) })), subtotal: fmt(subtotal), shipping: fmt(shipping), vat: fmt(vat), total: fmt(total) });
+  const buildInvoiceHtml = (data) => `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Invoice ${data.invoiceNumber}</title><style>body{font-family:Arial,sans-serif;margin:0;padding:32px;background:#f8fafc;color:#1f2937}.invoice{max-width:720px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,.08)}.header{display:flex;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{font-size:24px;font-weight:700;color:#3b74f2}.muted{color:#6b7280}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:24px}.box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{padding:12px 0;border-bottom:1px solid #e5e7eb;vertical-align:top}th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#6b7280}.summary{margin-top:16px;margin-left:auto;width:240px}.summary .row{display:flex;justify-content:space-between;padding:6px 0}.summary .total{font-size:18px;font-weight:700;border-top:1px solid #e5e7eb;margin-top:8px;padding-top:10px}</style></head><body><div class="invoice"><div class="header"><div><div class="brand">NextDoorSA</div><div class="muted">Brief order invoice</div></div><div style="text-align:right;"><div style="font-size:20px;font-weight:700;">${data.invoiceNumber}</div><div class="muted">${data.date}</div></div></div><div class="grid"><div class="box"><div class="muted" style="font-size:12px;">Order number</div><div style="font-weight:600;">${data.orderNumber}</div></div><div class="box"><div class="muted" style="font-size:12px;">Status</div><div style="font-weight:600;color:#16a34a;">${data.status}</div></div><div class="box"><div class="muted" style="font-size:12px;">Payment method</div><div style="font-weight:600;">${data.paymentMethod}</div></div><div class="box"><div class="muted" style="font-size:12px;">Issued on</div><div style="font-weight:600;">${data.date}</div></div></div><table><thead><tr><th>Item</th><th style="text-align:right;">Amount</th></tr></thead><tbody>${data.items.map(i => `<tr><td><div style="font-weight:600;">${i.name}</div><div style="color:#6b7280;font-size:12px;">${i.details}</div></td><td style="text-align:right;font-weight:600;">${i.price}</td></tr>`).join('')}</tbody></table><div class="summary"><div class="row"><span class="muted">Subtotal</span><span>${data.subtotal}</span></div><div class="row"><span class="muted">Shipping</span><span>${data.shipping}</span></div><div class="row"><span class="muted">VAT (15%)</span><span>${data.vat}</span></div><div class="row total"><span>Total</span><span>${data.total}</span></div></div></div></body></html>`;
+  const downloadInvoice = () => { const data = getInvoiceData(); const blob = new Blob([buildInvoiceHtml(data)], { type: 'text/html;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${data.invoiceNumber}.html`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+  document.getElementById('download-invoice-btn').addEventListener('click', downloadInvoice);
+  document.getElementById('download-invoice-btn-modal').addEventListener('click', downloadInvoice);
+});
+</script>
 </body>
 </html>
-
-

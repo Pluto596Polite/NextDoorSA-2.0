@@ -191,12 +191,18 @@
         </div>
         <div>
             <h2 class="fw-bold mb-1">Shopping Cart</h2>
-            <p class="text-muted mb-0">2 items in your cart</p>
+            <p class="text-muted mb-0"><span id="items-count">2</span> items in your cart</p>
         </div>
     </div>
 
-    <div class="custom-card d-flex align-items-center position-relative">
-        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0"><i class="bi bi-trash3"></i></button>
+    <div class="custom-card cart-item-card d-flex align-items-center position-relative"
+         data-item-id="kb-1"
+         data-name="Mechanical Keyboard"
+         data-seller="TechStore SA"
+         data-image="https://images.unsplash.com/photo-1595225476474-87563907a212?w=200"
+         data-variant="Midnight Black"
+         data-price="2000">
+        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0 btn-remove-item" title="Remove item"><i class="bi bi-trash3"></i></button>
         <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=200" alt="Mechanical Keyboard" class="cart-item-img me-4">
 
         <div class="flex-grow-1">
@@ -205,30 +211,36 @@
 
             <div class="d-flex justify-content-between align-items-center">
                 <div class="qty-selector">
-                    <button class="qty-btn"><i class="bi bi-dash"></i></button>
-                    <span class="mx-2 fw-medium">1</span>
-                    <button class="qty-btn"><i class="bi bi-plus"></i></button>
+                    <button class="qty-btn qty-decrease" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                    <input type="number" class="qty-input mx-2 fw-medium" value="1" min="1" style="width:60px; text-align:center; border:none; background:transparent; font-weight:600;">
+                    <button class="qty-btn qty-increase" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
                 </div>
-                <div class="price-text">R2000.00</div>
+                <div class="price-text">R2,000.00</div>
             </div>
         </div>
     </div>
 
-    <div class="custom-card d-flex align-items-center position-relative">
-        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0"><i class="bi bi-trash3"></i></button>
+    <div class="custom-card cart-item-card d-flex align-items-center position-relative"
+         data-item-id="chair-1"
+         data-name="Ergonomic Office Chair"
+         data-seller="Furniture Plus"
+         data-image="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=200"
+         data-variant="Grey fabric"
+         data-price="2800">
+        <button class="btn btn-link text-muted position-absolute top-0 end-0 mt-3 me-3 p-0 btn-remove-item" title="Remove item"><i class="bi bi-trash3"></i></button>
         <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=200" alt="Ergonomic Office Chair" class="cart-item-img me-4">
 
         <div class="flex-grow-1">
             <h6 class="fw-bold mb-1">Ergonomic Office Chair</h6>
             <p class="text-muted small mb-3">Sold by: Furniture Plus</p>
 
-            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
                 <div class="qty-selector">
-                    <button class="qty-btn"><i class="bi bi-dash"></i></button>
-                    <span class="mx-2 fw-medium">1</span>
-                    <button class="qty-btn"><i class="bi bi-plus"></i></button>
+                    <button class="qty-btn qty-decrease" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                    <input type="number" class="qty-input mx-2 fw-medium" value="1" min="1" style="width:60px; text-align:center; border:none; background:transparent; font-weight:600;">
+                    <button class="qty-btn qty-increase" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
                 </div>
-                <div class="price-text">R2800.00</div>
+                <div class="price-text">R2,800.00</div>
             </div>
         </div>
     </div>
@@ -244,16 +256,16 @@
 
         <div class="summary-row text-muted">
             <span>Subtotal</span>
-            <span class="text-dark fw-medium">R4800.00</span>
+            <span id="subtotal" class="text-dark fw-medium">R4,800.00</span>
         </div>
         <div class="summary-row text-muted">
             <span>Shipping</span>
-            <span class="text-dark fw-medium">R150.00</span>
+            <span id="shipping" class="text-dark fw-medium">R150.00</span>
         </div>
 
         <div class="summary-row summary-total">
             <span>Total</span>
-            <span class="price-text">R4950.00</span>
+            <span id="total" class="price-text">R4,950.00</span>
         </div>
 
         <div class="input-group mt-4 mb-4">
@@ -262,7 +274,7 @@
             <button class="btn promo-btn" type="button">Apply</button>
         </div>
 
-        <button class="btn-primary-custom mb-4" onclick="window.location.href='checkout.html'">
+        <button class="btn-primary-custom mb-4" onclick="window.location.href='PaymentGateway.html'">
             Proceed to Checkout <i class="bi bi-arrow-right ms-2"></i>
         </button>
 
@@ -282,6 +294,140 @@
 
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const fmt = (v) => new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(v);
+
+    function recalcTotals() {
+        const items = Array.from(document.querySelectorAll('.cart-item-card'));
+        let subtotal = 0;
+        let itemsCount = 0;
+        const itemsState = [];
+
+        items.forEach(item => {
+            const price = parseFloat(item.dataset.price) || 0;
+            const qtyInput = item.querySelector('.qty-input');
+            let qty = Number(qtyInput.value) || 0;
+            if (qty < 1) { qty = 1; qtyInput.value = 1; }
+            itemsCount += qty;
+            subtotal += price * qty;
+
+            // Ensure unit price text is formatted
+            const priceText = item.querySelector('.price-text');
+            if (priceText) priceText.textContent = fmt(price);
+
+            // collect item state
+            const name = item.dataset.name || '';
+            const seller = item.dataset.seller || '';
+            const image = item.dataset.image || '';
+            const variant = item.dataset.variant || '';
+            itemsState.push({
+                id: item.dataset.itemId || null,
+                name,
+                seller,
+                image,
+                variant,
+                details: variant,
+                price: price,
+                qty: qty
+            });
+        });
+
+        // shipping - keep fixed for now
+        const shippingFixed = 150;
+        const vat = Math.round(subtotal * 0.15 * 100) / 100; // 15%
+        const total = subtotal + shippingFixed + vat;
+
+        const subtotalEl = document.getElementById('subtotal');
+        const shippingEl = document.getElementById('shipping');
+        const totalEl = document.getElementById('total');
+        const itemsCountEl = document.getElementById('items-count');
+
+        if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+        if (shippingEl) shippingEl.textContent = fmt(shippingFixed);
+        if (totalEl) totalEl.textContent = fmt(total);
+        if (itemsCountEl) itemsCountEl.textContent = itemsCount;
+
+        // persist cart state to localStorage for other pages
+        const cartState = {
+            items: itemsState,
+            subtotal: subtotal,
+            shipping: shippingFixed,
+            vat: vat,
+            total: total
+        };
+        try { localStorage.setItem('nd_cart', JSON.stringify(cartState)); } catch (e) { /* ignore */ }
+
+        // Toggle checkout button
+        const checkoutBtn = document.querySelector('.btn-primary-custom');
+        if (checkoutBtn) {
+            if (items.length === 0 || itemsCount === 0) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.add('opacity-50');
+                checkoutBtn.style.pointerEvents = 'none';
+            } else {
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('opacity-50');
+                checkoutBtn.style.pointerEvents = '';
+            }
+        }
+    }
+
+    // Quantity increase/decrease
+    function wireQtyControls(root=document) {
+        root.querySelectorAll('.qty-decrease').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const input = e.currentTarget.parentElement.querySelector('.qty-input');
+                if (!input) return;
+                const val = Math.max(1, Number(input.value || 0) - 1);
+                input.value = val;
+                input.dispatchEvent(new Event('change'));
+            });
+        });
+
+        root.querySelectorAll('.qty-increase').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const input = e.currentTarget.parentElement.querySelector('.qty-input');
+                if (!input) return;
+                const val = Math.max(1, Number(input.value || 0) + 1);
+                input.value = val;
+                input.dispatchEvent(new Event('change'));
+            });
+        });
+
+        root.querySelectorAll('.qty-input').forEach(input => {
+            // sanitize on change
+            input.addEventListener('change', e => {
+                let v = Number(input.value);
+                if (!Number.isFinite(v) || v < 1) v = 1;
+                input.value = Math.floor(v);
+                recalcTotals();
+            });
+            // allow typing but sanitize on blur
+            input.addEventListener('blur', e => {
+                input.dispatchEvent(new Event('change'));
+            });
+        });
+    }
+
+    // Remove item
+    function wireRemoveButtons(root=document) {
+        root.querySelectorAll('.btn-remove-item').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const card = e.currentTarget.closest('.cart-item-card');
+                if (!card) return;
+                card.remove();
+                recalcTotals();
+            });
+        });
+    }
+
+    // initial wiring
+    wireQtyControls(document);
+    wireRemoveButtons(document);
+    recalcTotals();
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
