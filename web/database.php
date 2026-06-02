@@ -3,24 +3,33 @@ declare(strict_types=1);
 
 /**
  * Returns a MySQLi connection for the application database.
+ *
+ * Required environment variables:
+ * - DB_HOST
+ * - DB_USER
+ * - DB_PASSWORD
+ * - DB_NAME
  */
 function getDatabaseConnection(): mysqli
 {
-    $host = getenv('DB_HOST') ?: '127.0.0.1';
+    $host = trim((string) getenv('DB_HOST'));
     $port = (int) (getenv('DB_PORT') ?: 3306);
-    $username = getenv('DB_USER') ?: 'root';
-    $password = getenv('DB_PASSWORD') ?: '';
-    $database = getenv('DB_NAME') ?: 'nextdoorsa';
+    $username = trim((string) getenv('DB_USER'));
+    $password = (string) getenv('DB_PASSWORD');
+    $database = trim((string) getenv('DB_NAME'));
 
-    $connection = new mysqli($host, $username, $password, $database, $port);
-
-    if ($connection->connect_error) {
-        throw new RuntimeException('Database connection failed: ' . $connection->connect_error);
+    if ($host === '' || $username === '' || $database === '') {
+        throw new RuntimeException('Missing required database environment variables. Set DB_HOST, DB_USER, and DB_NAME.');
     }
 
-    if (! $connection->set_charset('utf8mb4')) {
-        throw new RuntimeException('Failed to set charset: ' . $connection->error);
-    }
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    return $connection;
+    try {
+        $connection = new mysqli($host, $username, $password, $database, $port);
+        $connection->set_charset('utf8mb4');
+
+        return $connection;
+    } catch (mysqli_sql_exception $exception) {
+        throw new RuntimeException('Database connection failed: ' . $exception->getMessage(), 0, $exception);
+    }
 }

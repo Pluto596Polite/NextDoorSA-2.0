@@ -27,7 +27,8 @@ Notes
 This repo now includes a minimal PHP MySQL setup:
 
 - `database.php` — reusable MySQL connection helper (`getDatabaseConnection()`).
-- `init_database.php` — one-time initialization script that creates the database and a `users` table.
+- `init_database.php` — CLI-only deployment script that imports `schema.sql` into an existing database.
+- `schema.sql` — database schema used by the deployment script.
 
 ### Requirements
 
@@ -38,16 +39,21 @@ This repo now includes a minimal PHP MySQL setup:
 
 - `DB_HOST` (default: `127.0.0.1`)
 - `DB_PORT` (default: `3306`)
-- `DB_USER` (default: `root`)
+- `DB_USER` (required for deployment)
 - `DB_PASSWORD` (default: empty)
-- `DB_NAME` (default: `nextdoorsa`)
+- `DB_NAME` (required for deployment)
 
 ### Initialize the database
 
-From the repository root:
+From the repository root, run the script from the command line after the hosting provider has created the database:
 
 ```bash
 php web/init_database.php
 ```
 
-After initialization, you can include `database.php` in PHP scripts and call `getDatabaseConnection()`.
+Important:
+- The script exits immediately if accessed through a browser.
+- It does not create the database for you; create it in your hosting control panel first.
+- After deployment, keep `init_database.php` out of the public web flow or remove it entirely.
+
+After deployment, you can include `database.php` in PHP scripts and call `getDatabaseConnection()`.
