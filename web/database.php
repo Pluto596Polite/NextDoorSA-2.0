@@ -35,6 +35,9 @@ function getDatabaseConnection(): mysqli
         
         // Ensure profile_image_url column exists
         ensureProfileImageColumn($connection);
+        
+        // Ensure condition column exists
+        ensureConditionColumn($connection);
 
         return $connection;
     } catch (mysqli_sql_exception $exception) {
@@ -75,6 +78,7 @@ CREATE TABLE IF NOT EXISTS listings (
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     category VARCHAR(100),
+    `condition` VARCHAR(50),
     status VARCHAR(50) DEFAULT 'active',
     image_url VARCHAR(255),
     views INT DEFAULT 0,
@@ -114,6 +118,19 @@ function ensureProfileImageColumn(mysqli $connection): void
     if ($result && $result->num_rows === 0) {
         // Column does not exist, add it
         $connection->query("ALTER TABLE `users` ADD `profile_image_url` VARCHAR(255) NULL DEFAULT NULL AFTER `phone`");
+    }
+}
+
+/**
+ * Ensures the condition column exists in the listings table.
+ */
+function ensureConditionColumn(mysqli $connection): void
+{
+    // Check if the column exists
+    $result = $connection->query("SHOW COLUMNS FROM `listings` LIKE 'condition'");
+    if ($result && $result->num_rows === 0) {
+        // Column does not exist, add it
+        $connection->query("ALTER TABLE `listings` ADD `condition` VARCHAR(50) NULL DEFAULT NULL AFTER `category`");
     }
 }
 
