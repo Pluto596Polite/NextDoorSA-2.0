@@ -6,55 +6,53 @@ declare(strict_types=1);
  */
 function getDatabaseConnection(): mysqli
 {
-    $host = '127.0.0.1';
+    // ============== INFINITYFREE DATABASE SETTINGS ==============
+    //      REPLACE THE PLACEHOLDERS BELOW WITH YOUR      
+    //      ACTUAL INFINITYFREE DATABASE CREDENTIALS.     
+    // ==========================================================
+    
+    $host = 'sql203.infinityfree.com';      // e.g., 'sql123.epizy.com'
+    $username = 'if0_42076321'; // e.g., 'epiz_12345678'
+    $password = 'Adriaan123!'; // The password you set for the database
+    $database = 'if0_42076321_nextdoorsa';  // e.g., 'epiz_12345678_mydb'
     $port = 3306;
-    $username = 'root';
-    
-    // --- IMPORTANT ---
-    // PLEASE ENTER YOUR LOCAL MYSQL PASSWORD HERE
-    $password = 'Adriaan123!';
-    
-    $database = 'nextdoorsa_db';
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
     try {
         // Connect to MySQL server
-        $connection = new mysqli($host, $username, $password, '', $port);
-        
-        // Create the database if it doesn't exist
-        $connection->query("CREATE DATABASE IF NOT EXISTS `$database`");
-        
-        // Select the database
-        $connection->select_db($database);
+        $connection = new mysqli($host, $username, $password, $database, $port);
         
         $connection->set_charset('utf8mb4');
 
-        // Automatically initialize tables if they don't exist
+        // The tables should be created by importing your SQL file on InfinityFree,
+        // but these checks can remain as they won't cause harm.
         initializeTables($connection);
-        
-        // Ensure profile_image_url column exists
         ensureProfileImageColumn($connection);
-        
-        // Ensure condition column exists
         ensureConditionColumn($connection);
 
         return $connection;
     } catch (mysqli_sql_exception $exception) {
-        // Provide a clear error message
+        // Provide a clear error message for debugging on the live server
         throw new RuntimeException(
-            "Database connection failed. Please check your credentials in `database.php`. The current username is '{$username}' and a password is " . 
-            (empty($password) ? "not being used." : "being used.") .
-            " Error: " . $exception->getMessage()
+            "Database connection failed. Please check your credentials in `database.php`. Error: " . $exception->getMessage()
         );
     }
 }
 
 /**
- * Automatically creates necessary tables if they don't exist.
+ * NOTE FOR DEPLOYMENT: This function will only run if the tables are missing.
+ * On InfinityFree, you should import your database schema manually via phpMyAdmin.
+ * This function serves as a fallback.
  */
 function initializeTables(mysqli $connection): void
 {
+    // Check if tables already exist to prevent re-inserting demo data
+    $result = $connection->query("SHOW TABLES LIKE 'users'");
+    if ($result && $result->num_rows > 0) {
+        return; // Tables exist, do nothing.
+    }
+
     // Create users table
     $sqlUsers = <<<SQL
 CREATE TABLE IF NOT EXISTS users (
@@ -113,10 +111,8 @@ SQL;
  */
 function ensureProfileImageColumn(mysqli $connection): void
 {
-    // Check if the column exists
     $result = $connection->query("SHOW COLUMNS FROM `users` LIKE 'profile_image_url'");
     if ($result && $result->num_rows === 0) {
-        // Column does not exist, add it
         $connection->query("ALTER TABLE `users` ADD `profile_image_url` VARCHAR(255) NULL DEFAULT NULL AFTER `phone`");
     }
 }
@@ -126,10 +122,8 @@ function ensureProfileImageColumn(mysqli $connection): void
  */
 function ensureConditionColumn(mysqli $connection): void
 {
-    // Check if the column exists
     $result = $connection->query("SHOW COLUMNS FROM `listings` LIKE 'condition'");
     if ($result && $result->num_rows === 0) {
-        // Column does not exist, add it
         $connection->query("ALTER TABLE `listings` ADD `condition` VARCHAR(50) NULL DEFAULT NULL AFTER `category`");
     }
 }
@@ -139,12 +133,10 @@ function ensureConditionColumn(mysqli $connection): void
  */
 function insertDemoProducts(mysqli $connection): void
 {
-    // Check if there are any listings
     $result = $connection->query("SELECT COUNT(*) as count FROM listings");
     $row = $result->fetch_assoc();
     
     if ($row['count'] == 0) {
-        // Create a 'System' user to own these demo products if one doesn't exist
         $sysUserResult = $connection->query("SELECT id FROM users WHERE email = 'system@nextdoorsa.com'");
         $sysUserId = null;
         
@@ -156,16 +148,12 @@ function insertDemoProducts(mysqli $connection): void
             $sysUserId = $sysUserResult->fetch_assoc()['id'];
         }
 
-        // The 6 Demo Products
         $demoProducts = [
-            // Ensure these IDs match the data-listing-id in ExploreProductsPage.html exactly!
-            // Format: ID, user_id, title, description, price, category, status, image_url, views
             [1, $sysUserId, 'Mechanical Keyboard', 'Mechanical gaming keyboard with RGB lighting', 2000.00, 'Electronics', 'active', 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=600', 120],
             [2, $sysUserId, 'Office Chair', 'Ergonomic office chair with lumbar support', 2800.00, 'Furniture', 'active', 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=600', 210],
             [3, $sysUserId, 'Wooden Bookshelf', 'Wooden bookshelf with 5 shelves', 1800.00, 'Furniture', 'active', 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600', 150],
             [4, $sysUserId, 'Dining Table Set', 'Modern minimalist dining table set', 3500.00, 'Furniture', 'active', 'https://images.unsplash.com/photo-1604578762246-41134e37f9cc?w=600', 85],
-            [5, $sysUserId, 'Brass Desk Lamp', 'Vintage brass desk lamp with adjustable arm', 1200.00, 'Home', 'active', 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600', 45],
-            [6, $sysUserId, 'Gaming Mouse', 'Wireless gaming mouse with precision sensor', 950.00, 'Electronics', 'active', 'https://images.unsplash.com/photo-1615663245857-ac1eeb536fcb?w=600', 300]
+            [5, $sysUserId, 'Brass Desk Lamp', 'Vintage brass desk lamp with adjustable arm', 1200.00, 'Home', 'active', 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600', 45]
         ];
 
         $stmt = $connection->prepare("INSERT INTO listings (id, user_id, title, description, price, category, status, image_url, views) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");

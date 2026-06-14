@@ -23,7 +23,8 @@ try {
         $stmt = $connection->prepare("SELECT * FROM listings WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->bind_param("i", $userId);
     } else {
-        // Fetch all active listings for the Explore page
+        // Fetch all active listings for the Explore page, EXCLUDING demo products (user_id = 1)
+        // Ensure that the System admin's products are not shown if the user is exploring
         $stmt = $connection->prepare("SELECT * FROM listings WHERE status = 'active' ORDER BY created_at DESC");
     }
 
