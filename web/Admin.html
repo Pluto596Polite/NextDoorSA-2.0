@@ -296,10 +296,33 @@
 
     // Restrict this page to admins. The authoritative check is server-side
     // (every admin endpoint also verifies the session); this redirects non-admins away.
-    fetch('session_status.php', { credentials: 'same-origin' })
-        .then(r => r.json())
-        .then(s => { if (!s.isAdmin) window.location.href = 'LogIntoAccount.html'; })
-        .catch(() => { /* endpoint unavailable (e.g. static preview): leave page as-is */ });
+    //
+    // On InfinityFree the anti-bot layer can serve the FIRST request after a
+    // redirect with a cold session (before the __test cookie warms up), which
+    // would momentarily report the user as not-logged-in. To avoid ejecting a
+    // genuine admin on that single cold read, we re-check a couple of times
+    // (with no caching) and only redirect once we're consistently not an admin.
+    (async function guardAdmin() {
+        for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+                const r = await fetch('session_status.php', { credentials: 'same-origin', cache: 'no-store' });
+                const s = await r.json();
+                if (s.isAdmin) return;            // confirmed admin: stay.
+                if (s.loggedIn && !s.isAdmin) break; // real user, not admin: eject.
+                // loggedIn false on this attempt: could be a cold session — retry.
+            } catch (e) {
+                // Non-JSON (e.g. anti-bot challenge) or network blip: retry.
+            }
+            await new Promise(res => setTimeout(res, 700));
+        }
+        // Final confirmation before ejecting, so we never bounce on a transient blip.
+        try {
+            const r = await fetch('session_status.php', { credentials: 'same-origin', cache: 'no-store' });
+            const s = await r.json();
+            if (s.isAdmin) return;
+        } catch (e) { return; /* still can't confirm: leave page, server endpoints stay protected */ }
+        window.location.href = 'LogIntoAccount.html';
+    })();
 
     document.addEventListener("DOMContentLoaded", () => {
         userModal = new bootstrap.Modal(document.getElementById('editUserModal'));
