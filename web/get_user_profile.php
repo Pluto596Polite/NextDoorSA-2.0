@@ -18,7 +18,7 @@ $userId = $_SESSION['user_id'];
 try {
     $connection = getDatabaseConnection();
 
-    $stmt = $connection->prepare("SELECT id, first_name, last_name, email, phone, profile_image_url FROM users WHERE id = ?");
+    $stmt = $connection->prepare("SELECT id, first_name, last_name, email, phone, profile_image_url, address, city, province, postal_code FROM users WHERE id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();

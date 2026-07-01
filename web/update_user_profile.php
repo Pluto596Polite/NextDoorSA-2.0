@@ -23,6 +23,10 @@ $firstName = trim($_POST['first_name'] ?? '');
 $lastName = trim($_POST['last_name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $phone = trim($_POST['phone'] ?? '');
+$address = trim($_POST['address'] ?? '');
+$city = trim($_POST['city'] ?? '');
+$province = trim($_POST['province'] ?? '');
+$postalCode = trim($_POST['postal_code'] ?? '');
 
 if (empty($firstName) || empty($lastName) || empty($email)) {
     http_response_code(400);
@@ -53,8 +57,8 @@ try {
     $stmt->close();
 
     // Update user information
-    $stmt = $connection->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?");
-    $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userId);
+    $stmt = $connection->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, address = ?, city = ?, province = ?, postal_code = ? WHERE id = ?");
+    $stmt->bind_param("ssssssssi", $firstName, $lastName, $email, $phone, $address, $city, $province, $postalCode, $userId);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Profile updated successfully!']);

@@ -24,7 +24,7 @@ if (empty($email) || empty($password)) {
 try {
     $connection = getDatabaseConnection();
 
-    $stmt = $connection->prepare("SELECT id, first_name, password_hash FROM users WHERE email = ?");
+    $stmt = $connection->prepare("SELECT id, first_name, password_hash, is_admin FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -43,8 +43,13 @@ try {
         // Password is correct, start the session
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['first_name'];
-        
-        echo json_encode(['success' => true, 'message' => 'Login successful!']);
+        $_SESSION['is_admin'] = (int)($user['is_admin'] ?? 0) === 1;
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Login successful!',
+            'redirect' => $_SESSION['is_admin'] ? 'Admin.html' : 'Home.html',
+        ]);
     } else {
         // Incorrect password
         http_response_code(401);

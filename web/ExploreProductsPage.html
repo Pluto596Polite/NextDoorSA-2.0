@@ -157,26 +157,15 @@
         <p class="text-muted small mb-4">Refine your search</p>
 
         <h6 class="fw-semibold mb-3 fs-6">Categories</h6>
-        <div class="d-flex flex-column gap-2 mb-4">
+        <div class="d-flex flex-column gap-2 mb-4" id="category-options">
             <div class="form-check">
-                <input class="form-check-input" type="radio" name="category" id="catAll" checked>
+                <input class="form-check-input" type="radio" name="category" id="catAll" value="all" checked>
                 <label class="form-check-label text-muted" for="catAll">All</label>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="category" id="catElec">
-                <label class="form-check-label text-muted" for="catElec">Electronics</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="category" id="catFurn">
-                <label class="form-check-label text-muted" for="catFurn">Furniture</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="category" id="catHome">
-                <label class="form-check-label text-muted" for="catHome">Home</label>
-            </div>
+            <!-- Category options are generated from the live listings so the filter never drifts. -->
         </div>
 
-        <button class="btn btn-primary w-100 py-2">Apply Filters</button>
+        <button class="btn btn-primary w-100 py-2" id="apply-filters-btn">Apply Filters</button>
     </div>
 
     <p class="text-muted small mb-3" id="items-count">Loading...</p>
@@ -191,34 +180,61 @@
 document.addEventListener('DOMContentLoaded', () => {
     const productListings = document.getElementById('product-listings');
     const itemsCount = document.getElementById('items-count');
+    let allListings = [];
+    const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const categoryOptions = document.getElementById('category-options');
+    const requestedCategory = new URLSearchParams(window.location.search).get('category');
 
-    fetch('get_listings.php?scope=all')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const listings = data.data;
-                itemsCount.textContent = `${listings.length} items found`;
-                productListings.innerHTML = '';
+    // Build the category radio list from the categories actually present in the listings,
+    // so the filter can never drift out of sync with what sellers have posted.
+    function buildCategoryOptions(listings) {
+        const cats = [...new Set(listings.map(l => (l.category || '').trim()).filter(Boolean))].sort();
+        cats.forEach((cat, i) => {
+            const id = 'cat-' + i;
+            const div = document.createElement('div');
+            div.className = 'form-check';
+            div.innerHTML = `<input class="form-check-input" type="radio" name="category" id="${id}" value="${cat}">` +
+                            `<label class="form-check-label text-muted" for="${id}">${cat}</label>`;
+            categoryOptions.appendChild(div);
+        });
+    }
 
-                if (listings.length === 0) {
-                    productListings.innerHTML = '<p class="text-center text-muted">No products found.</p>';
-                    return;
-                }
+    // Honour the ?category= param passed from the homepage cards.
+    function preselectFromUrl() {
+        if (!requestedCategory) return;
+        const match = [...document.querySelectorAll('input[name="category"]')]
+            .find(r => r.value.toLowerCase() === requestedCategory.toLowerCase());
+        if (match) match.checked = true;
+    }
 
-                listings.forEach(listing => {
-                    const card = document.createElement('div');
-                    card.className = 'col-md-6';
-                    card.innerHTML = `
+    function getSelectedCategory() {
+        const checked = document.querySelector('input[name="category"]:checked');
+        return checked ? checked.value : 'all';
+    }
+
+    function render(listings) {
+        itemsCount.textContent = `${listings.length} items found`;
+        productListings.innerHTML = '';
+
+        if (listings.length === 0) {
+            productListings.innerHTML = '<p class="text-center text-muted">No products found.</p>';
+            return;
+        }
+
+        listings.forEach(listing => {
+            const card = document.createElement('div');
+            card.className = 'col-md-6';
+            card.innerHTML = `
                         <div class="product-card">
                             <div class="card-img-wrapper">
-                                <img src="${listing.image_url || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600'}" alt="${listing.title}">
+                                <img src="${escapeHtml(listing.image_url) || 'https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600'}" alt="${escapeHtml(listing.title)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=600'">
                                 <div class="card-img-overlay-custom">
-                                    <h5>${listing.title}</h5>
+                                    <h5>${escapeHtml(listing.title)}</h5>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted small mb-0 flex-grow-1">${listing.description}</p>
-                                <div class="price-text">R${listing.price}</div>
+                                <p class="text-muted small mb-0 flex-grow-1">${escapeHtml(listing.description)}</p>
+                                <div class="price-text">R${escapeHtml(listing.price)}</div>
                                 <div class="row g-2 mt-auto">
                                     <!--<div class="col-6"><button class="btn btn-outline-primary w-100">Wishlist</button></div> -->
                                     <div class="col-6"><button class="btn btn-primary w-100 btn-add-to-cart" data-listing-id="${listing.id}">Add to Cart</button></div>
@@ -226,10 +242,31 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     `;
-                    productListings.appendChild(card);
-                });
+            productListings.appendChild(card);
+        });
 
-                document.querySelectorAll('.btn-add-to-cart').forEach(button => button.addEventListener('click', addToCart));
+        document.querySelectorAll('.btn-add-to-cart').forEach(button => button.addEventListener('click', addToCart));
+    }
+
+    function applyFilters() {
+        const category = getSelectedCategory();
+        if (category === 'all') {
+            render(allListings);
+        } else {
+            render(allListings.filter(l => (l.category || '').toLowerCase() === category.toLowerCase()));
+        }
+    }
+
+    document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
+
+    fetch('get_listings.php?scope=all')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                allListings = data.data;
+                buildCategoryOptions(allListings);
+                preselectFromUrl();
+                applyFilters(); // honour any category pre-selected from the URL
             } else {
                 itemsCount.textContent = 'Could not load items.';
             }
@@ -240,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     function addToCart(event) {
-        const button = event.target;
+        const button = event.currentTarget;
         const listingId = button.dataset.listingId;
         const originalText = button.innerHTML;
 
@@ -273,5 +310,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+<script src="nav-auth.js"></script>
 </body>
 </html>

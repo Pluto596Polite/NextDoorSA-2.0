@@ -30,6 +30,9 @@ function getDatabaseConnection(): mysqli
         initializeTables($connection);
         ensureProfileImageColumn($connection);
         ensureConditionColumn($connection);
+        ensureProfileAddressColumns($connection);
+        ensureUserManagementColumns($connection);
+        ensureAdminAccount($connection);
 
         return $connection;
     } catch (mysqli_sql_exception $exception) {
@@ -125,6 +128,80 @@ function ensureConditionColumn(mysqli $connection): void
     $result = $connection->query("SHOW COLUMNS FROM `listings` LIKE 'condition'");
     if ($result && $result->num_rows === 0) {
         $connection->query("ALTER TABLE `listings` ADD `condition` VARCHAR(50) NULL DEFAULT NULL AFTER `category`");
+    }
+}
+
+/**
+ * Ensures the optional address columns exist in the users table.
+ */
+function ensureProfileAddressColumns(mysqli $connection): void
+{
+    $columns = [
+        'address'     => "ADD `address` VARCHAR(255) NULL DEFAULT NULL",
+        'city'        => "ADD `city` VARCHAR(100) NULL DEFAULT NULL",
+        'province'    => "ADD `province` VARCHAR(100) NULL DEFAULT NULL",
+        'postal_code' => "ADD `postal_code` VARCHAR(20) NULL DEFAULT NULL",
+    ];
+    foreach ($columns as $name => $clause) {
+        $result = $connection->query("SHOW COLUMNS FROM `users` LIKE '$name'");
+        if ($result && $result->num_rows === 0) {
+            $connection->query("ALTER TABLE `users` $clause");
+        }
+    }
+}
+
+/**
+ * Ensures the columns the Admin dashboard manages exist:
+ *   role   - Admin | Seller | Buyer (display/management label)
+ *   status - active | suspended (account status)
+ */
+function ensureUserManagementColumns(mysqli $connection): void
+{
+    $columns = [
+        'role'   => "ADD `role` VARCHAR(20) NOT NULL DEFAULT 'Buyer'",
+        'status' => "ADD `status` VARCHAR(20) NOT NULL DEFAULT 'active'",
+    ];
+    foreach ($columns as $name => $clause) {
+        $result = $connection->query("SHOW COLUMNS FROM `users` LIKE '$name'");
+        if ($result && $result->num_rows === 0) {
+            $connection->query("ALTER TABLE `users` $clause");
+        }
+    }
+}
+
+/**
+ * Ensures an is_admin column exists and a default admin account is present.
+ * Admin status is now determined server-side instead of via a client-side
+ * credential check that exposed the password in the page source.
+ */
+function ensureAdminAccount(mysqli $connection): void
+{
+    $result = $connection->query("SHOW COLUMNS FROM `users` LIKE 'is_admin'");
+    if ($result && $result->num_rows === 0) {
+        $connection->query("ALTER TABLE `users` ADD `is_admin` TINYINT(1) NOT NULL DEFAULT 0");
+    }
+
+    $adminEmail = 'admin@nextdoor.com';
+    $check = $connection->prepare("SELECT id FROM users WHERE email = ?");
+    $check->bind_param("s", $adminEmail);
+    $check->execute();
+    $exists = $check->get_result()->num_rows > 0;
+    $check->close();
+
+    if (!$exists) {
+        $hash = password_hash('admin123', PASSWORD_DEFAULT);
+        $stmt = $connection->prepare(
+            "INSERT INTO users (first_name, last_name, email, password_hash, is_admin, role, status) VALUES ('Admin', 'User', ?, ?, 1, 'Admin', 'active')"
+        );
+        $stmt->bind_param("ss", $adminEmail, $hash);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        // Make sure the existing admin account keeps its admin flag and role.
+        $stmt = $connection->prepare("UPDATE users SET is_admin = 1, role = 'Admin' WHERE email = ?");
+        $stmt->bind_param("s", $adminEmail);
+        $stmt->execute();
+        $stmt->close();
     }
 }
 

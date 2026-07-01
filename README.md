@@ -6,3 +6,10 @@
 - `web/init_database.php` is CLI-only deployment code.
 - `web/schema.sql` contains the schema imported during deployment.
 
+Here is the hosting link: http://nextdoorsa.site.je/
+
+Admin credentials: 
+Username: admin@nextdoor.com
+Password: admin123
+
+Payment Gateway used: PayStack

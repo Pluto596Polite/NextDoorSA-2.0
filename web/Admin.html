@@ -56,6 +56,10 @@
 
         .action-btn { cursor: pointer; transition: color 0.2s; border: none; background: transparent; padding: 0; }
         .action-btn:hover { color: #3b74f2 !important; }
+
+        .role-select, .status-select { width: auto; min-width: 110px; font-size: 0.8rem; font-weight: 600; }
+        .status-select.select-active { background-color: rgba(25, 135, 84, 0.1); color: #198754; border-color: rgba(25, 135, 84, 0.3); }
+        .status-select.select-suspended { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; border-color: rgba(220, 53, 69, 0.3); }
     </style>
 </head>
 <body>
@@ -104,14 +108,14 @@
             <div class="dashboard-card">
                 <div class="stat-icon icon-users"><i class="bi bi-people"></i></div>
                 <small class="text-muted fw-medium d-block mb-1">Total Users</small>
-                <h3 class="fw-bold mb-0">4</h3>
+                <h3 class="fw-bold mb-0" id="stat-total-users">—</h3>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="dashboard-card">
                 <div class="stat-icon icon-products"><i class="bi bi-box-seam"></i></div>
                 <small class="text-muted fw-medium d-block mb-1">Total Products</small>
-                <h3 class="fw-bold mb-0">12</h3>
+                <h3 class="fw-bold mb-0" id="stat-total-products">—</h3>
             </div>
         </div>
     </div>
@@ -141,52 +145,8 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <span class="fw-semibold d-block text-dark name-val" style="font-size: 0.9rem;">John Smith</span>
-                        <small class="text-muted email-val">john.smith@example.com</small>
-                    </td>
-                    <td>
-                        <details class="role-dropdown role-blue">
-                            <summary></summary>
-                            <div class="dropdown-menu-custom">
-                                <label><input type="checkbox" checked> Admin</label>
-                                <label><input type="checkbox" checked> Seller</label>
-                            </div>
-                        </details>
-                    </td>
-                    <td><span class="status-pill status-active status-val">Active</span></td>
-                    <td class="text-muted listings-val" style="font-size: 0.9rem;">12</td>
-                    <td>
-                        <div class="d-flex gap-3 text-muted">
-                            <button class="action-btn" onclick="openUserEdit(this)"><i class="bi bi-pencil-square"></i></button>
-                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="fw-semibold d-block text-dark name-val" style="font-size: 0.9rem;">Sarah Johnson</span>
-                        <small class="text-muted email-val">sarah.j@example.com</small>
-                    </td>
-                    <td>
-                        <details class="role-dropdown role-gray">
-                            <summary></summary>
-                            <div class="dropdown-menu-custom">
-                                <label><input type="checkbox" checked> Buyer</label>
-                            </div>
-                        </details>
-                    </td>
-                    <td><span class="status-pill status-suspended status-val">Suspended</span></td>
-                    <td class="text-muted listings-val" style="font-size: 0.9rem;">0</td>
-                    <td>
-                        <div class="d-flex gap-3 text-muted">
-                            <button class="action-btn" onclick="openUserEdit(this)"><i class="bi bi-pencil-square"></i></button>
-                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                <tbody id="users-tbody">
+                <tr><td colspan="5" class="text-center text-muted py-4">Loading users…</td></tr>
                 </tbody>
             </table>
         </div>
@@ -212,37 +172,8 @@
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <span class="fw-semibold d-block text-dark p-name-val" style="font-size: 0.9rem;">Vintage Oak Table</span>
-                        <small class="text-muted p-seller-val">Sold by: John Smith</small>
-                    </td>
-                    <td class="p-category-val" style="font-size: 0.9rem;">Furniture</td>
-                    <td class="fw-medium text-dark p-price-val" style="font-size: 0.9rem;">R 1,500</td>
-                    <td><span class="status-pill status-published p-status-val">Published</span></td>
-                    <td>
-                        <div class="d-flex gap-3 text-muted">
-                            <button class="action-btn" onclick="openProductEdit(this)"><i class="bi bi-pencil-square"></i></button>
-                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="fw-semibold d-block text-dark p-name-val" style="font-size: 0.9rem;">Samsung Smart TV</span>
-                        <small class="text-muted p-seller-val">Sold by: Mike Wilson</small>
-                    </td>
-                    <td class="p-category-val" style="font-size: 0.9rem;">Electronics</td>
-                    <td class="fw-medium text-dark p-price-val" style="font-size: 0.9rem;">R 6,200</td>
-                    <td><span class="status-pill status-pending p-status-val">Pending Review</span></td>
-                    <td>
-                        <div class="d-flex gap-3 text-muted">
-                            <button class="action-btn" onclick="openProductEdit(this)"><i class="bi bi-pencil-square"></i></button>
-                            <button class="action-btn text-danger" onclick="deleteRow(this)"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </td>
-                </tr>
+                <tbody id="products-tbody">
+                <tr><td colspan="5" class="text-center text-muted py-4">Loading products…</td></tr>
                 </tbody>
             </table>
         </div>
@@ -277,11 +208,23 @@
                     <input type="email" class="form-control" id="editUserEmail">
                 </div>
                 <div class="mb-3">
+                    <label class="form-label fw-medium small">Role</label>
+                    <select class="form-select" id="editUserRole">
+                        <option value="Admin">Admin</option>
+                        <option value="Seller">Seller</option>
+                        <option value="Buyer">Buyer</option>
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label class="form-label fw-medium small">Account Status</label>
                     <select class="form-select" id="editUserStatus">
-                        <option value="Active">Active</option>
-                        <option value="Suspended">Suspended</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-medium small">Listings (total)</label>
+                    <input type="number" class="form-control" id="editUserListings" readonly disabled>
                 </div>
             </div>
             <div class="modal-footer border-0 pt-0">
@@ -312,18 +255,21 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-medium small">Category</label>
                         <select class="form-select" id="editProductCategory">
-                            <option>Furniture</option>
                             <option>Electronics</option>
-                            <option>Home & Garden</option>
+                            <option>Furniture</option>
+                            <option>Home</option>
+                            <option>Clothing</option>
+                            <option>Books</option>
+                            <option>Sports</option>
+                            <option>Vehicles</option>
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-medium small">Status</label>
                     <select class="form-select" id="editProductStatus">
-                        <option value="Published">Published</option>
-                        <option value="Pending Review">Pending Review</option>
-                        <option value="Draft">Draft</option>
+                        <option value="active">Active</option>
+                        <option value="sold">Sold</option>
                     </select>
                 </div>
             </div>
@@ -337,76 +283,227 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    let currentRow = null;
     let userModal = null;
     let productModal = null;
+    let editingUserId = null;
+    let editingListingId = null;
+    const usersById = {};
+    const listingsById = {};
+
+    const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmt = (v) => new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(Number(v) || 0);
+    const post = (url, data) => fetch(url, { method: 'POST', credentials: 'same-origin', body: new URLSearchParams(data) }).then(r => r.json());
+
+    // Restrict this page to admins. The authoritative check is server-side
+    // (every admin endpoint also verifies the session); this redirects non-admins away.
+    fetch('session_status.php', { credentials: 'same-origin' })
+        .then(r => r.json())
+        .then(s => { if (!s.isAdmin) window.location.href = 'LogIntoAccount.html'; })
+        .catch(() => { /* endpoint unavailable (e.g. static preview): leave page as-is */ });
 
     document.addEventListener("DOMContentLoaded", () => {
         userModal = new bootstrap.Modal(document.getElementById('editUserModal'));
         productModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+        loadUsers();
+        loadListings();
     });
 
     function switchTab(viewId, el) {
         document.querySelectorAll('.custom-tab').forEach(tab => tab.classList.remove('active'));
         el.classList.add('active');
-
         document.querySelectorAll('.view-section').forEach(view => view.classList.add('d-none'));
         document.getElementById(viewId).classList.remove('d-none');
     }
 
-    // --- User Editing Logic ---
-    function openUserEdit(btn) {
-        currentRow = btn.closest('tr');
-        document.getElementById('editUserName').value = currentRow.querySelector('.name-val').innerText;
-        document.getElementById('editUserEmail').value = currentRow.querySelector('.email-val').innerText;
-        document.getElementById('editUserStatus').value = currentRow.querySelector('.status-val').innerText;
+    function statusClass(sel) {
+        sel.classList.toggle('select-active', sel.value === 'active');
+        sel.classList.toggle('select-suspended', sel.value === 'suspended');
+    }
+
+    // ---------- Users ----------
+    function loadUsers() {
+        const tbody = document.getElementById('users-tbody');
+        fetch('admin_get_users.php', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) throw new Error(data.error || 'Failed to load users');
+                renderUsers(data.data);
+                document.getElementById('stat-total-users').textContent = data.data.length;
+            })
+            .catch(() => { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Could not load users.</td></tr>'; });
+    }
+
+    function renderUsers(users) {
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = '';
+        if (!users.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No users found.</td></tr>';
+            return;
+        }
+        const roleOpts = ['Admin', 'Seller', 'Buyer'];
+        users.forEach(u => {
+            usersById[u.id] = u;
+            const tr = document.createElement('tr');
+            const name = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+            tr.innerHTML = `
+                <td>
+                    <span class="fw-semibold d-block text-dark" style="font-size: 0.9rem;">${escapeHtml(name) || '(no name)'}</span>
+                    <small class="text-muted">${escapeHtml(u.email)}</small>
+                </td>
+                <td>
+                    <select class="form-select form-select-sm role-select">
+                        ${roleOpts.map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select form-select-sm status-select">
+                        <option value="active" ${u.status === 'active' ? 'selected' : ''}>Active</option>
+                        <option value="suspended" ${u.status === 'suspended' ? 'selected' : ''}>Suspended</option>
+                    </select>
+                </td>
+                <td class="text-muted" style="font-size: 0.9rem;">${u.listings_count}</td>
+                <td>
+                    <div class="d-flex gap-3 text-muted">
+                        <button class="action-btn btn-user-edit"><i class="bi bi-pencil-square"></i></button>
+                        <button class="action-btn text-danger btn-user-delete"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>`;
+            const roleSel = tr.querySelector('.role-select');
+            const statusSel = tr.querySelector('.status-select');
+            statusClass(statusSel);
+            roleSel.addEventListener('change', () => persistUser(u.id, roleSel.value, statusSel.value));
+            statusSel.addEventListener('change', () => { statusClass(statusSel); persistUser(u.id, roleSel.value, statusSel.value); });
+            tr.querySelector('.btn-user-edit').addEventListener('click', () => openUserEdit(u.id));
+            tr.querySelector('.btn-user-delete').addEventListener('click', () => deleteUser(u.id));
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Inline role/status change persists immediately (name/email unchanged).
+    function persistUser(id, role, status) {
+        const u = usersById[id];
+        post('admin_update_user.php', {
+            user_id: id, first_name: u.first_name, last_name: u.last_name, email: u.email, role, status
+        }).then(data => {
+            if (data.success) { u.role = role; u.status = status; }
+            else { alert(data.error || 'Update failed.'); loadUsers(); }
+        }).catch(() => { alert('Update failed.'); loadUsers(); });
+    }
+
+    function openUserEdit(id) {
+        const u = usersById[id];
+        editingUserId = id;
+        document.getElementById('editUserName').value = `${u.first_name || ''} ${u.last_name || ''}`.trim();
+        document.getElementById('editUserEmail').value = u.email || '';
+        document.getElementById('editUserRole').value = u.role || 'Buyer';
+        document.getElementById('editUserStatus').value = u.status || 'active';
+        document.getElementById('editUserListings').value = u.listings_count;
         userModal.show();
     }
 
     function saveUser() {
-        currentRow.querySelector('.name-val').innerText = document.getElementById('editUserName').value;
-        currentRow.querySelector('.email-val').innerText = document.getElementById('editUserEmail').value;
-
-        const newStatus = document.getElementById('editUserStatus').value;
-        const statusSpan = currentRow.querySelector('.status-val');
-        statusSpan.innerText = newStatus;
-
-        statusSpan.className = 'status-pill status-val ' + (newStatus === 'Active' ? 'status-active' : 'status-suspended');
-        userModal.hide();
+        const fullName = document.getElementById('editUserName').value.trim();
+        const parts = fullName.split(/\s+/);
+        const firstName = parts.shift() || '';
+        const lastName = parts.join(' ');
+        post('admin_update_user.php', {
+            user_id: editingUserId,
+            first_name: firstName,
+            last_name: lastName,
+            email: document.getElementById('editUserEmail').value.trim(),
+            role: document.getElementById('editUserRole').value,
+            status: document.getElementById('editUserStatus').value
+        }).then(data => {
+            if (data.success) { userModal.hide(); loadUsers(); }
+            else alert(data.error || 'Could not save user.');
+        }).catch(() => alert('Could not save user.'));
     }
 
-    // --- Product Editing Logic ---
-    function openProductEdit(btn) {
-        currentRow = btn.closest('tr');
-        document.getElementById('editProductName').value = currentRow.querySelector('.p-name-val').innerText;
-        document.getElementById('editProductPrice').value = currentRow.querySelector('.p-price-val').innerText;
-        document.getElementById('editProductCategory').value = currentRow.querySelector('.p-category-val').innerText;
-        document.getElementById('editProductStatus').value = currentRow.querySelector('.p-status-val').innerText;
+    function deleteUser(id) {
+        const u = usersById[id];
+        if (!confirm(`Delete user "${u.email}"? This also removes their listings.`)) return;
+        post('admin_delete_user.php', { user_id: id }).then(data => {
+            if (data.success) loadUsers();
+            else alert(data.error || 'Could not delete user.');
+        }).catch(() => alert('Could not delete user.'));
+    }
+
+    // ---------- Listings / Products ----------
+    function loadListings() {
+        const tbody = document.getElementById('products-tbody');
+        fetch('admin_get_listings.php', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) throw new Error(data.error || 'Failed to load listings');
+                renderListings(data.data);
+                document.getElementById('stat-total-products').textContent = data.data.length;
+            })
+            .catch(() => { tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Could not load products.</td></tr>'; });
+    }
+
+    function renderListings(listings) {
+        const tbody = document.getElementById('products-tbody');
+        tbody.innerHTML = '';
+        if (!listings.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No products found.</td></tr>';
+            return;
+        }
+        listings.forEach(l => {
+            listingsById[l.id] = l;
+            const active = (l.status || 'active') === 'active';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <span class="fw-semibold d-block text-dark" style="font-size: 0.9rem;">${escapeHtml(l.title)}</span>
+                    <small class="text-muted">Sold by: ${escapeHtml(l.seller_name) || 'Unknown'}</small>
+                </td>
+                <td style="font-size: 0.9rem;">${escapeHtml(l.category) || 'Uncategorized'}</td>
+                <td class="fw-medium text-dark" style="font-size: 0.9rem;">${fmt(l.price)}</td>
+                <td><span class="status-pill ${active ? 'status-active' : 'status-draft'}">${active ? 'Active' : 'Sold'}</span></td>
+                <td>
+                    <div class="d-flex gap-3 text-muted">
+                        <button class="action-btn btn-product-edit"><i class="bi bi-pencil-square"></i></button>
+                        <button class="action-btn text-danger btn-product-delete"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>`;
+            tr.querySelector('.btn-product-edit').addEventListener('click', () => openProductEdit(l.id));
+            tr.querySelector('.btn-product-delete').addEventListener('click', () => deleteProduct(l.id));
+            tbody.appendChild(tr);
+        });
+    }
+
+    function openProductEdit(id) {
+        const l = listingsById[id];
+        editingListingId = id;
+        document.getElementById('editProductName').value = l.title || '';
+        document.getElementById('editProductPrice').value = l.price || '';
+        document.getElementById('editProductCategory').value = l.category || 'Electronics';
+        document.getElementById('editProductStatus').value = (l.status || 'active');
         productModal.show();
     }
 
     function saveProduct() {
-        currentRow.querySelector('.p-name-val').innerText = document.getElementById('editProductName').value;
-        currentRow.querySelector('.p-price-val').innerText = document.getElementById('editProductPrice').value;
-        currentRow.querySelector('.p-category-val').innerText = document.getElementById('editProductCategory').value;
-
-        const newStatus = document.getElementById('editProductStatus').value;
-        const statusSpan = currentRow.querySelector('.p-status-val');
-        statusSpan.innerText = newStatus;
-
-        let statusClass = 'status-published';
-        if(newStatus === 'Pending Review') statusClass = 'status-pending';
-        if(newStatus === 'Draft') statusClass = 'status-draft';
-
-        statusSpan.className = 'status-pill p-status-val ' + statusClass;
-        productModal.hide();
+        post('admin_update_listing.php', {
+            listing_id: editingListingId,
+            title: document.getElementById('editProductName').value.trim(),
+            price: document.getElementById('editProductPrice').value,
+            category: document.getElementById('editProductCategory').value,
+            status: document.getElementById('editProductStatus').value
+        }).then(data => {
+            if (data.success) { productModal.hide(); loadListings(); }
+            else alert(data.error || 'Could not save product.');
+        }).catch(() => alert('Could not save product.'));
     }
 
-    function deleteRow(btn) {
-        if(confirm("Are you sure you want to delete this row?")) {
-            btn.closest('tr').remove();
-        }
+    function deleteProduct(id) {
+        const l = listingsById[id];
+        if (!confirm(`Delete listing "${l.title}"?`)) return;
+        post('admin_delete_listing.php', { listing_id: id }).then(data => {
+            if (data.success) loadListings();
+            else alert(data.error || 'Could not delete listing.');
+        }).catch(() => alert('Could not delete listing.'));
     }
 </script>
+<script src="nav-auth.js"></script>
 </body>
 </html>

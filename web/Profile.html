@@ -126,15 +126,16 @@
 	<div class="container mt-5 pt-4">
 		<div class="profile-hero mb-4 d-flex flex-wrap gap-4 align-items-center justify-content-between">
 			<div class="d-flex gap-3 align-items-center">
-				<img class="profile-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=60&auto=format&fit=crop" alt="Profile avatar">
+				<img id="profile-avatar" class="profile-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=60&auto=format&fit=crop" alt="Profile avatar">
 				<div>
 					<span class="badge rounded-pill px-3 py-2 mb-2">Trusted Seller</span>
-					<h2 class="mb-1 fw-bold">Ava Smith</h2>
+					<h2 id="profile-name-display" class="mb-1 fw-bold">My Profile</h2>
 					<p class="mb-0">Manage your personal info, payment methods, and security in one place.</p>
 				</div>
 			</div>
 			<div class="text-end">
-				<button class="btn btn-light fw-semibold">Upload new photo</button>
+				<input type="file" id="avatar-input" class="d-none" accept="image/png,image/jpeg,image/gif">
+					<button type="button" id="upload-photo-btn" class="btn btn-light fw-semibold">Upload new photo</button>
 			</div>
 		</div>
 	</div>
@@ -178,7 +179,8 @@
 		</aside>
 
 		<section class="col-lg-8">
-			<form class="card profile-card p-4 mb-4">
+			<form id="personal-info-form" class="card profile-card p-4 mb-4">
+				<div id="profile-alert"></div>
 				<div class="d-flex justify-content-between align-items-center mb-3">
 					<h5 class="section-title mb-0">Personal information</h5>
 					<span class="text-muted">Last updated May 21, 2026</span>
@@ -186,43 +188,50 @@
 				<div class="row g-3">
 					<div class="col-md-6">
 						<label class="form-label">First name</label>
-						<input type="text" class="form-control" value="Ava">
+						<input type="text" id="pi-first" name="first_name" class="form-control" required>
 					</div>
 					<div class="col-md-6">
 						<label class="form-label">Last name</label>
-						<input type="text" class="form-control" value="Smith">
+						<input type="text" id="pi-last" name="last_name" class="form-control" required>
 					</div>
 					<div class="col-md-6">
 						<label class="form-label">Email</label>
-						<input type="email" class="form-control" value="ava.smith@example.com">
+						<input type="email" id="pi-email" name="email" class="form-control" required>
 					</div>
 					<div class="col-md-6">
 						<label class="form-label">Phone</label>
-						<input type="tel" class="form-control" value="+27 82 555 1234">
+						<input type="tel" id="pi-phone" name="phone" class="form-control">
 					</div>
 					<div class="col-12">
 						<label class="form-label">Address</label>
-						<input type="text" class="form-control" value="14 Ridgeway Ave, Sandton">
+						<input type="text" id="pi-address" name="address" class="form-control" placeholder="Street address">
 					</div>
 					<div class="col-md-6">
 						<label class="form-label">City</label>
-						<input type="text" class="form-control" value="Johannesburg">
+						<input type="text" id="pi-city" name="city" class="form-control" placeholder="City">
 					</div>
 					<div class="col-md-3">
 						<label class="form-label">Province</label>
-						<select class="form-select">
+						<select id="pi-province" name="province" class="form-select">
+							<option value="">Select province</option>
+							<option>Eastern Cape</option>
+							<option>Free State</option>
 							<option>Gauteng</option>
-							<option>Western Cape</option>
 							<option>KwaZulu-Natal</option>
+							<option>Limpopo</option>
+							<option>Mpumalanga</option>
+							<option>Northern Cape</option>
+							<option>North West</option>
+							<option>Western Cape</option>
 						</select>
 					</div>
 					<div class="col-md-3">
 						<label class="form-label">Postal code</label>
-						<input type="text" class="form-control" value="2196">
+						<input type="text" id="pi-postal" name="postal_code" class="form-control" placeholder="0000">
 					</div>
 				</div>
 				<div class="d-flex gap-2 mt-4">
-					<button class="btn btn-primary">Save changes</button>
+					<button type="submit" id="pi-save" class="btn btn-primary">Save changes</button>
 					<button class="btn btn-outline-secondary" type="button">Cancel</button>
 				</div>
 			</form>
@@ -261,7 +270,7 @@
 					</div>
 				</div>
 				<div class="d-flex gap-2 mt-4">
-					<button class="btn btn-primary">Save payment method</button>
+					<button type="button" class="btn btn-primary" onclick="alert('Payment methods are a demo preview and are not stored.')">Save payment method</button>
 					<button class="btn btn-outline-secondary" type="button">Add another card</button>
 				</div>
 			</form>
@@ -294,7 +303,7 @@
 					</div>
 				</div>
 				<div class="d-flex gap-2 mt-4">
-					<button class="btn btn-primary">Update security</button>
+					<button type="button" class="btn btn-primary" onclick="alert('Security settings are a demo preview in this build.')">Update security</button>
 					<button class="btn btn-outline-secondary" type="button">Log out everywhere</button>
 				</div>
 			</form>
@@ -307,5 +316,79 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('personal-info-form');
+    const alertBox = document.getElementById('profile-alert');
+    const nameDisplay = document.getElementById('profile-name-display');
+    const avatarImg = document.getElementById('profile-avatar');
+    const uploadBtn = document.getElementById('upload-photo-btn');
+    const avatarInput = document.getElementById('avatar-input');
+
+    const showAlert = (type, msg) => {
+        alertBox.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+    };
+
+    // Load the logged-in user's profile.
+    fetch('get_user_profile.php', { credentials: 'same-origin' })
+        .then(res => {
+            if (res.status === 401) { window.location.href = 'LogIntoAccount.html'; throw new Error('auth'); }
+            return res.json();
+        })
+        .then(data => {
+            if (!data.success) throw new Error(data.error || 'Failed to load profile');
+            const u = data.data;
+            document.getElementById('pi-first').value = u.first_name || '';
+            document.getElementById('pi-last').value = u.last_name || '';
+            document.getElementById('pi-email').value = u.email || '';
+            document.getElementById('pi-phone').value = u.phone || '';
+            document.getElementById('pi-address').value = u.address || '';
+            document.getElementById('pi-city').value = u.city || '';
+            document.getElementById('pi-province').value = u.province || '';
+            document.getElementById('pi-postal').value = u.postal_code || '';
+            nameDisplay.textContent = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'My Profile';
+            if (u.profile_image_url) avatarImg.src = u.profile_image_url;
+        })
+        .catch(err => { if (err.message !== 'auth') showAlert('danger', 'Could not load your profile. Please try again later.'); });
+
+    // Save personal information.
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById('pi-save');
+        const original = saveBtn.innerHTML;
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+        fetch('update_user_profile.php', { method: 'POST', credentials: 'same-origin', body: new FormData(form) })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', '<i class="bi bi-check-circle-fill me-2"></i>' + data.message);
+                    nameDisplay.textContent = `${document.getElementById('pi-first').value} ${document.getElementById('pi-last').value}`.trim();
+                } else {
+                    showAlert('danger', data.error || 'Could not save changes.');
+                }
+            })
+            .catch(() => showAlert('danger', 'An unexpected error occurred.'))
+            .finally(() => { saveBtn.disabled = false; saveBtn.innerHTML = original; });
+    });
+
+    // Avatar upload.
+    uploadBtn.addEventListener('click', () => avatarInput.click());
+    avatarInput.addEventListener('change', () => {
+        if (!avatarInput.files.length) return;
+        const fd = new FormData();
+        fd.append('avatar', avatarInput.files[0]);
+        fetch('upload_avatar.php', { method: 'POST', credentials: 'same-origin', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) { avatarImg.src = data.image_url; showAlert('success', 'Photo updated.'); }
+                else showAlert('danger', data.error || 'Upload failed.');
+            })
+            .catch(() => showAlert('danger', 'Upload failed.'));
+    });
+});
+</script>
+<script src="nav-auth.js"></script>
 </body>
 </html>
