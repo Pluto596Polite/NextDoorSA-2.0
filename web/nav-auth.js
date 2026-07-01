@@ -35,7 +35,7 @@
         } else {
             menu.innerHTML =
                 '<li><a class="dropdown-item" href="LogIntoAccount.html"><i class="bi bi-box-arrow-in-right me-2"></i>Log In</a></li>' +
-                '<li><a class="dropdown-item" href="index.html"><i class="bi bi-person-plus me-2"></i>Create Account</a></li>';
+                '<li><a class="dropdown-item" href="CreateAnAccount.html"><i class="bi bi-person-plus me-2"></i>Create Account</a></li>';
         }
     }
 
