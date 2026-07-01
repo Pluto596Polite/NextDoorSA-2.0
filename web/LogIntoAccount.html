@@ -253,6 +253,29 @@ document.addEventListener('DOMContentLoaded', () => {
         pwToggle.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
     });
 
+    // Warm up the InfinityFree anti-bot layer on page load so the first login
+    // POST lands on a "warm" connection and its session cookie actually sticks.
+    fetch('session_status.php', { credentials: 'same-origin', cache: 'no-store' }).catch(() => {});
+
+    // After a successful login, InfinityFree can drop the session cookie on the
+    // very first (cold) request. Confirm the session is truly live before we
+    // navigate — re-asserting the login once if needed — so the destination page
+    // (e.g. the admin dashboard) doesn't bounce the user back to sign-in.
+    async function confirmSessionThenRedirect(target, formData) {
+        for (let i = 0; i < 6; i++) {
+            try {
+                const s = await fetch('session_status.php', { credentials: 'same-origin', cache: 'no-store' }).then(r => r.json());
+                if (s.loggedIn) { window.location.href = target; return; }
+            } catch (e) { /* anti-bot challenge / blip: keep trying */ }
+            if (i === 1) {
+                // Re-assert the credentials once to warm a cold session.
+                try { await fetch('login_handler.php', { method: 'POST', credentials: 'same-origin', body: formData }); } catch (e) {}
+            }
+            await new Promise(res => setTimeout(res, 600));
+        }
+        window.location.href = target; // fallback: navigate anyway
+    }
+
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -274,9 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="alert alert-success">
                         <i class="bi bi-check-circle-fill me-2"></i> ${data.message} Redirecting...
                     </div>`;
-                setTimeout(() => {
-                    window.location.href = data.redirect || 'Home.html';
-                }, 1500);
+                confirmSessionThenRedirect(data.redirect || 'Home.html', formData);
             } else {
                 alertContainer.innerHTML = `
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
