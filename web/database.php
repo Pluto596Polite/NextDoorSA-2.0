@@ -13,7 +13,7 @@ function getDatabaseConnection(): mysqli
     
     $host = 'sql203.infinityfree.com';      // e.g., 'sql123.epizy.com'
     $username = 'if0_42076321'; // e.g., 'epiz_12345678'
-    $password = 'Adriaan123!'; // The password you set for the database
+    $password = 'FiLFBHeyvwc'; // The password you set for the database
     $database = 'if0_42076321_nextdoorsa';  // e.g., 'epiz_12345678_mydb'
     $port = 3306;
 
