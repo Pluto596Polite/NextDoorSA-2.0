@@ -33,6 +33,7 @@ function getDatabaseConnection(): mysqli
         ensureProfileAddressColumns($connection);
         ensureUserManagementColumns($connection);
         ensureAdminAccount($connection);
+        ensureOrderTables($connection);
 
         return $connection;
     } catch (mysqli_sql_exception $exception) {
@@ -203,6 +204,45 @@ function ensureAdminAccount(mysqli $connection): void
         $stmt->execute();
         $stmt->close();
     }
+}
+
+/**
+ * Ensures the orders + order_items tables exist so each purchase can be
+ * persisted against the buying user for the Profile "Order history" popup.
+ */
+function ensureOrderTables(mysqli $connection): void
+{
+    $sqlOrders = <<<SQL
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    order_number VARCHAR(50) NOT NULL,
+    invoice_number VARCHAR(50),
+    payment_method VARCHAR(100),
+    payment_ref VARCHAR(100),
+    status VARCHAR(50) NOT NULL DEFAULT 'Paid',
+    subtotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    shipping DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    vat DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    total DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+SQL;
+    $connection->query($sqlOrders);
+
+    $sqlOrderItems = <<<SQL
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    image_url VARCHAR(500),
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    quantity INT NOT NULL DEFAULT 1,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+SQL;
+    $connection->query($sqlOrderItems);
 }
 
 /**

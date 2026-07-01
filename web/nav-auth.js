@@ -29,7 +29,6 @@
             menu.innerHTML =
                 '<li><h6 class="dropdown-header">Hi, ' + name + '</h6></li>' +
                 '<li><a class="dropdown-item" href="Profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>' +
-                '<li><a class="dropdown-item" href="MyListings.html"><i class="bi bi-card-list me-2"></i>My Listings</a></li>' +
                 '<li><hr class="dropdown-divider"></li>' +
                 '<li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>';
         } else {

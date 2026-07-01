@@ -452,8 +452,17 @@ document.addEventListener('DOMContentLoaded', () => {
 					};
 					try { localStorage.setItem('nd_order', JSON.stringify(order)); } catch (e) {}
 
-					// Navigate to complete page
-					window.location.href = 'CompleteOrder.html';
+					// Persist the order to the logged-in user's account so it shows
+					// in the Profile "Order history" popup. Checkout stays resilient:
+					// navigation happens whether or not the save succeeds.
+					fetch('save_order.php', {
+						method: 'POST',
+						credentials: 'same-origin',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(order)
+					})
+					.catch(() => { /* offline / not logged in: localStorage copy still renders on CompleteOrder */ })
+					.finally(() => { window.location.href = 'CompleteOrder.html'; });
 				},
 				onClose: function() {
 					console.log('Payment window closed.');
