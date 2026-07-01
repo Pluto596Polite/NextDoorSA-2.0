@@ -156,6 +156,9 @@
         <h5 class="fw-bold mb-1">Filters</h5>
         <p class="text-muted small mb-4">Refine your search</p>
 
+        <h6 class="fw-semibold mb-2 fs-6">Search</h6>
+        <input type="text" class="form-control mb-4" id="filter-search" placeholder="Search by name or description">
+
         <h6 class="fw-semibold mb-3 fs-6">Categories</h6>
         <div class="d-flex flex-column gap-2 mb-4" id="category-options">
             <div class="form-check">
@@ -165,7 +168,28 @@
             <!-- Category options are generated from the live listings so the filter never drifts. -->
         </div>
 
-        <button class="btn btn-primary w-100 py-2" id="apply-filters-btn">Apply Filters</button>
+        <h6 class="fw-semibold mb-2 fs-6">Price range (R)</h6>
+        <div class="row g-2 mb-4">
+            <div class="col-6"><input type="number" min="0" step="0.01" class="form-control" id="filter-price-min" placeholder="Min"></div>
+            <div class="col-6"><input type="number" min="0" step="0.01" class="form-control" id="filter-price-max" placeholder="Max"></div>
+        </div>
+
+        <h6 class="fw-semibold mb-2 fs-6">Condition</h6>
+        <select class="form-select mb-4" id="filter-condition">
+            <option value="all">Any condition</option>
+            <!-- Condition options are generated from the live listings. -->
+        </select>
+
+        <h6 class="fw-semibold mb-2 fs-6">Sort by</h6>
+        <select class="form-select mb-4" id="filter-sort">
+            <option value="newest">Newest first</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="name-asc">Name: A to Z</option>
+        </select>
+
+        <button class="btn btn-primary w-100 py-2 mb-2" id="apply-filters-btn">Apply Filters</button>
+        <button class="btn btn-outline-secondary w-100 py-2" id="clear-filters-btn">Clear Filters</button>
     </div>
 
     <p class="text-muted small mb-3" id="items-count">Loading...</p>
@@ -207,9 +231,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (match) match.checked = true;
     }
 
+    // Build the condition dropdown from the conditions actually present in listings.
+    function buildConditionOptions(listings) {
+        const conditionSelect = document.getElementById('filter-condition');
+        const conds = [...new Set(listings.map(l => (l.condition || '').trim()).filter(Boolean))].sort();
+        conds.forEach(cond => {
+            const opt = document.createElement('option');
+            opt.value = cond;
+            opt.textContent = cond;
+            conditionSelect.appendChild(opt);
+        });
+    }
+
     function getSelectedCategory() {
         const checked = document.querySelector('input[name="category"]:checked');
         return checked ? checked.value : 'all';
+    }
+
+    // Read every active filter control into a single object.
+    function getFilters() {
+        return {
+            category: getSelectedCategory(),
+            search: (document.getElementById('filter-search').value || '').trim().toLowerCase(),
+            priceMin: parseFloat(document.getElementById('filter-price-min').value),
+            priceMax: parseFloat(document.getElementById('filter-price-max').value),
+            condition: document.getElementById('filter-condition').value,
+            sort: document.getElementById('filter-sort').value
+        };
     }
 
     function render(listings) {
@@ -249,15 +297,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function applyFilters() {
-        const category = getSelectedCategory();
-        if (category === 'all') {
-            render(allListings);
-        } else {
-            render(allListings.filter(l => (l.category || '').toLowerCase() === category.toLowerCase()));
+        const f = getFilters();
+        let results = allListings.slice();
+
+        // Category (radio)
+        if (f.category !== 'all') {
+            results = results.filter(l => (l.category || '').toLowerCase() === f.category.toLowerCase());
         }
+
+        // Condition (dropdown)
+        if (f.condition && f.condition !== 'all') {
+            results = results.filter(l => (l.condition || '').toLowerCase() === f.condition.toLowerCase());
+        }
+
+        // Keyword search over title + description
+        if (f.search) {
+            results = results.filter(l =>
+                (l.title || '').toLowerCase().includes(f.search) ||
+                (l.description || '').toLowerCase().includes(f.search));
+        }
+
+        // Price range (ignore blank / invalid bounds)
+        if (!Number.isNaN(f.priceMin)) {
+            results = results.filter(l => (Number(l.price) || 0) >= f.priceMin);
+        }
+        if (!Number.isNaN(f.priceMax)) {
+            results = results.filter(l => (Number(l.price) || 0) <= f.priceMax);
+        }
+
+        // Sort (default 'newest' keeps the server's created_at DESC order)
+        switch (f.sort) {
+            case 'price-asc':  results.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0)); break;
+            case 'price-desc': results.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0)); break;
+            case 'name-asc':   results.sort((a, b) => (a.title || '').localeCompare(b.title || '')); break;
+        }
+
+        render(results);
     }
 
     document.getElementById('apply-filters-btn').addEventListener('click', applyFilters);
+
+    // Enter in the search box applies filters immediately.
+    document.getElementById('filter-search').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); applyFilters(); }
+    });
+
+    // Reset every control back to its default and re-render.
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+        document.getElementById('filter-search').value = '';
+        document.getElementById('filter-price-min').value = '';
+        document.getElementById('filter-price-max').value = '';
+        document.getElementById('filter-condition').value = 'all';
+        document.getElementById('filter-sort').value = 'newest';
+        const allRadio = document.querySelector('input[name="category"][value="all"]');
+        if (allRadio) allRadio.checked = true;
+        applyFilters();
+    });
 
     fetch('get_listings.php?scope=all')
         .then(response => response.json())
@@ -265,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 allListings = data.data;
                 buildCategoryOptions(allListings);
+                buildConditionOptions(allListings);
                 preselectFromUrl();
                 applyFilters(); // honour any category pre-selected from the URL
             } else {

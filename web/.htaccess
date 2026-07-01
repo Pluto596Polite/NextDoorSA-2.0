@@ -1,0 +1,9 @@
+# Case-insensitive URL matching.
+# The live InfinityFree server runs Linux (case-sensitive), so a link such as
+# "CreateAnAccount.html" 404s if the uploaded file's case differs even slightly.
+# mod_speling auto-corrects the case to the real file on disk.
+# CheckCaseOnly limits correction to case differences (won't "fix" real typos).
+<IfModule mod_speling.c>
+    CheckSpelling On
+    CheckCaseOnly On
+</IfModule>
