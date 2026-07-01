@@ -275,23 +275,30 @@
 				</div>
 			</form>
 
-			<form class="card profile-card p-4">
+			<form id="security-form" class="card profile-card p-4">
 				<h5 class="section-title mb-3">Security</h5>
+					<div id="security-alert"></div>
 				<div class="row g-3">
 					<div class="col-md-6">
 						<label class="form-label">Current password</label>
-						<input type="password" class="form-control" placeholder="••••••••">
-					</div>
-					<div class="col-md-6">
-						<label class="form-label">New password</label>
-						<input type="password" class="form-control" placeholder="Create a new password">
-					</div>
-					<div class="col-md-6">
-						<label class="form-label">Two-factor authentication</label>
-						<select class="form-select">
-							<option>Enabled</option>
-							<option>Disabled</option>
-						</select>
+						<div class="input-group">
+								<input type="password" id="sec-current" name="current_password" class="form-control" placeholder="Current password" autocomplete="current-password" required>
+								<button class="btn btn-outline-secondary sec-toggle" type="button" tabindex="-1" aria-label="Show password"><i class="bi bi-eye"></i></button>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">New password</label>
+							<div class="input-group">
+								<input type="password" id="sec-new" name="new_password" class="form-control" placeholder="At least 8 characters" minlength="8" autocomplete="new-password" required>
+								<button class="btn btn-outline-secondary sec-toggle" type="button" tabindex="-1" aria-label="Show password"><i class="bi bi-eye"></i></button>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Confirm new password</label>
+							<div class="input-group">
+								<input type="password" id="sec-confirm" name="confirm_password" class="form-control" placeholder="Re-enter new password" minlength="8" autocomplete="new-password" required>
+								<button class="btn btn-outline-secondary sec-toggle" type="button" tabindex="-1" aria-label="Show password"><i class="bi bi-eye"></i></button>
+							</div>
 					</div>
 					<div class="col-md-6">
 						<label class="form-label">Notifications</label>
@@ -303,8 +310,7 @@
 					</div>
 				</div>
 				<div class="d-flex gap-2 mt-4">
-					<button type="button" class="btn btn-primary" onclick="alert('Security settings are a demo preview in this build.')">Update security</button>
-					<button class="btn btn-outline-secondary" type="button">Log out everywhere</button>
+					<button type="submit" id="sec-save" class="btn btn-primary">Update password</button>
 				</div>
 			</form>
 		</section>
@@ -371,6 +377,46 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(() => showAlert('danger', 'An unexpected error occurred.'))
             .finally(() => { saveBtn.disabled = false; saveBtn.innerHTML = original; });
+    });
+
+    // Security: change password.
+    const securityForm = document.getElementById('security-form');
+    const securityAlert = document.getElementById('security-alert');
+    const showSecAlert = (type, msg) => {
+        securityAlert.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+    };
+
+    // Show/hide toggles for each password field.
+    document.querySelectorAll('.sec-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = btn.previousElementSibling;
+            const icon = btn.querySelector('i');
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+            btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+    });
+
+    securityForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newPw = document.getElementById('sec-new').value;
+        const confirmPw = document.getElementById('sec-confirm').value;
+        if (newPw !== confirmPw) { showSecAlert('danger', 'New password and confirmation do not match.'); return; }
+
+        const btn = document.getElementById('sec-save');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+
+        fetch('update_password.php', { method: 'POST', credentials: 'same-origin', body: new FormData(securityForm) })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) { showSecAlert('success', '<i class="bi bi-check-circle-fill me-2"></i>' + data.message); securityForm.reset(); }
+                else showSecAlert('danger', data.error || 'Could not update password.');
+            })
+            .catch(() => showSecAlert('danger', 'An unexpected error occurred.'))
+            .finally(() => { btn.disabled = false; btn.innerHTML = original; });
     });
 
     // Avatar upload.
